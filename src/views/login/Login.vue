@@ -1,0 +1,144 @@
+<template>
+  <div class="login-container">
+    <transition name="fade">
+      <el-card style="max-width: 600px">
+        <el-form ref="loginForm" :model="form" :rules="rules" autocomplete="on"
+          style="max-width: 600px; max-height: 500px;">
+          <img src="@/assets/images/svg/bld.svg" alt="Login Icon" style="margin-left: 30%;" />
+          <el-text style="font-size: 13px; margin-left: 25px;">没有账户？</el-text><el-link type="primary" :underline="false"
+            style="font-size: 13px;">立即注册</el-link>
+          <el-form-item prop="userId">
+            <el-input v-model="form.userId" prefix-icon="User" placeholder="手机号或邮箱" size="large"
+              style="padding-top: 20px;" class="custom-input-height"></el-input>
+          </el-form-item>
+
+          <el-form-item prop="password">
+            <el-input type="password" v-model="form.password" prefix-icon="Lock" autocomplete="current-password"
+              placeholder="密码" size="large" style="padding-top: 30px;"><template #suffix>
+                <el-button type="text" size="mini" @click="handleForgotPassword"
+                  style="color: #2a598a; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">忘记密码</el-button>
+              </template> </el-input>
+          </el-form-item>
+          <el-button type="success" @click="loginRequest" size="large"
+            style="width: 500px; height: 50px; font-size: 20px; margin-top: 30px;">登录</el-button>
+        </el-form>
+      </el-card>
+    </transition>
+  </div>
+</template>
+
+<script setup>
+import { reactive, ref } from 'vue';
+import { ElMessage } from 'element-plus';
+import { useRouter, useRoute } from 'vue-router'
+import axios from 'axios'
+
+const router = useRouter();
+
+const form = reactive({
+  userId: '',
+  password: ''
+});
+
+
+const rules = reactive({
+  userId: [
+    { required: true, message: '请输入手机号或者邮箱', trigger: 'blur' },
+    { min: 3, max: 50, message: '长度在 3 到 50 个字符', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 6, max: 40, message: '长度在 6 到 40 个字符', trigger: 'blur' }
+  ]
+});
+
+const loginForm = ref(null);
+const dighumUrl = process.env.DIGHUM_URL;
+
+
+
+  const loginRequest = (async() => {
+  loginForm.value.validate(async (valid) => {
+    if (valid) {
+      let userId = form.userId;
+      let email = ''
+      let phoneNumber = ''
+      if (userId.includes('@')) {
+        email = userId;
+      } else {
+        phoneNumber = userId;
+      }
+      await axios.post(dighumUrl + '/v1/auth/user/login', {
+        'phoneNumber': phoneNumber,
+        'email': email,
+        'password': form.password
+      }, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(response => {
+        //get token
+        let token = response.data.token;
+        if (token == '' || token == undefined) {
+          ElMessage.success('登录异常，请联系管理员！')
+        } else {
+          //存储token
+          localStorage.setItem('token', token);
+          router.push('/homepage');
+          ElMessage.success('登录成功！')
+        }
+      }).catch(error => {
+        console.log('respose code:' + error.response.status)
+        ElMessage.error(error.response.data)
+      })
+    }
+  });
+})
+
+function handleForgotPassword() {
+  window.location.href = '/resetPwd'
+}
+
+</script>
+
+<style scoped>
+.custom-input-height .el-input__inner {
+  height: 40px;
+  /* 你想要的高度 */
+  line-height: 40px;
+  /* 行高与高度一致，使输入内容垂直居中 */
+}
+
+.login-container {
+  background-image: url('../../assets/images/background.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  text-align: center;
+  font-size: 100px;
+  margin-bottom: 15px;
+}
+
+.el-form {
+  width: 500px;
+  height: 500px;
+}
+
+.el-link {
+  margin-right: 8px;
+}
+
+.el-link .el-icon--right.el-icon {
+  vertical-align: text-bottom;
+}
+</style>
