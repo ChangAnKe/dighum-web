@@ -4,20 +4,20 @@
             <el-input v-model="resource.comKey.fileName" clearable />
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="getMyVideos" :loading="isLoading">查询</el-button>
+            <el-button type="primary" @click="getMyAudios" :loading="isLoading">查询</el-button>
         </el-form-item>
     </el-form>
     <div class="video-list">
-        <el-card v-for="(video, index) in videos" :key="index" style="width: 250px;height: 200px;">
+        <el-card v-for="(audio, index) in audios" :key="index" style="width: 250px;height: 200px;">
             <template #header>
                 <div class="card-header">
-                    <span style="font-size: 15px;">{{ video.comKey.fileName
+                    <span style="font-size: 15px;">{{ audio.comKey.fileName
                         }}</span>
                 </div>
             </template>
-            <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + video.resourceUrl"
-                :poster="dighumUrl + video.coverUrl"
-                :id="video.comKey.userId + '@_@' + video.comKey.fileType + '@_@' + video.comKey.fileName" />
+            <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + audio.resourceUrl"
+                :poster="dighumUrl + '/vauvi/audio.png'"
+                :id="audio.comKey.userId + '@_@' + audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
 
         </el-card>
     </div>
@@ -32,17 +32,17 @@ import { ElMessage } from 'element-plus'
 
 const dighumUrl = process.env.DIGHUM_URL;
 
-let videos = reactive([])
+let audios = reactive([])
 const resource = reactive({
     comKey: {
-        fileType: "VI",
+        fileType: "AU",
         fileName: ""
     }
 })
 
 const isLoading = ref(false);
 
-const getMyVideos = async () => {
+const getMyAudios = async () => {
     isLoading.value = true;
     // 发送请求
     await axios.post("/v1/resource/getResources", resource, {
@@ -53,18 +53,18 @@ const getMyVideos = async () => {
         isLoading.value = false;
         if (response.status = '200') {
             if (response.data.length == 0) {
-                ElMessage.success('无满足条件的视频，请上传！');
+                ElMessage.success('无满足条件的音频，请上传！');
             } else {
                 //确保使用响应式的方式更新数组
-                videos.splice(0, videos.length, ...response.data);
+                audios.splice(0, audios.length, ...response.data);
             }
         } else {
-            ElMessage.error('获取视频列表异常，请联系管理员！');
+            ElMessage.error('获取音频列表异常，请联系管理员！');
         }
 
     }).catch(error => {
         isLoading.value = false;
-        ElMessage.error('获取视频列表失败，请联系管理员！');
+        ElMessage.error('获取音频列表失败，请联系管理员！');
     });
 }
 
@@ -72,7 +72,6 @@ const getMyVideos = async () => {
 </script>
 
 <style scoped>
-
 .demo-form-inline .el-input {
     --el-input-width: 220px;
 }
@@ -95,6 +94,7 @@ const getMyVideos = async () => {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    height: 10px;
 }
 
 .video-description {

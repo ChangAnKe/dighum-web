@@ -9,13 +9,13 @@
             </el-icon>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item>View</el-dropdown-item>
-                <el-dropdown-item>Add</el-dropdown-item>
-                <el-dropdown-item>Delete</el-dropdown-item>
+                <el-dropdown-item>详情</el-dropdown-item>
+                <el-dropdown-item>余额: <el-text class="mx-1" type="primary">{{ userInfo.balance }}</el-text> 分钟</el-dropdown-item>
+                <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
-          <span>{{ user.userName }}</span>
+          <span>{{ userInfo.userName }}</span>
         </div>
       </el-header>
       <el-container>
@@ -45,17 +45,20 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { Menu as IconMenu, Message, Setting } from '@element-plus/icons-vue'
-import welcome from './Calender.vue'
+import { useUserStore } from '@/stores/UseUserStore';
+import { useRouter } from 'vue-router'
 
-const user = {
-  date: '2016-05-02',
-  userName: 'Tom',
-  address: 'No. 189, Grove St, Los Angeles'
-}
+const router = useRouter();
+const store = useUserStore();
+let userInfo = ref(store.userInfo);
 
-
+const logout = (() => {
+  //清除用户信息
+  store.logout();
+  router.push('/login')
+})
 
 </script>
 
@@ -103,6 +106,7 @@ const user = {
 }
 
 .el-aside {
-    border-right: 2px solid #d8e1f5; /* 右侧边框 */
-  }
+  border-right: 2px solid #d8e1f5;
+  /* 右侧边框 */
+}
 </style>

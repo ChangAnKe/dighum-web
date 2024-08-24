@@ -7,32 +7,18 @@
             <el-form-item v-if="!switchStatus"><el-input v-model="textarea" maxlength="1000"
                     style="width: 1000px;margin-top: 50px;" placeholder="请输入文本" show-word-limit type="textarea"
                     autosize="{ minRows: 2, maxRows: 200 }" /></el-form-item>
-            <!-- <el-form-item label="音频" v-if="switchStatus" style="margin-top: 50px;">
-            <el-upload class="upload-demo" drag action="" :on-preview="handlePreview" :on-remove="handleRemove"
-                :before-remove="beforeRemove" :file-list="audioList" :auto-upload="false" :on-change="handleAudioChange"
-                :accept="'audio/*'" list-type="picture-card">
-                <i class="el-icon-upload" />
-                <div class="el-upload__text">将音频文件拖到此处，或<em>点击上传</em></div>
-            </el-upload>
-        </el-form-item>
-        <el-form-item label="视频" style="margin-top: 50px;">
-            <el-upload class="upload-demo" drag action="" :on-preview="handlePreview" :on-remove="handleRemove"
-                :before-remove="beforeRemove" :file-list="videoList" :auto-upload="false" :on-change="handleVideoChange"
-                :accept="'video/*'" list-type="picture-card">
-                <i class="el-icon-upload" />
-                <div class="el-upload__text">将视频文件拖到此处，或<em>点击上传</em></div>
-            </el-upload>
-        </el-form-item> -->
+            
             <el-form-item v-if="switchStatus">
                 <el-upload ref="audioUpload" class="upload-demo" drag multiple :auto-upload="false"
                     :file-list="audioList" limit=1 style="margin-top: 50px;" :before-upload="beforeAudioUpload"
-                    :on-change="handleAudioChange">
+                    :on-change="handleAudioChange"
+                    :accept="`.mp3,.m4a,.mav`">
                     <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                     <div class="el-upload__text"><el-text class="mx-1" type="warning"
                             size="large">将音频文件拖到此处，或<em>点击上传</em></el-text></div>
                     <template #tip>
                         <div class="el-upload__tip">
-                            格式支持： mp3/mav
+                            <el-text class="mx-1" type="warning" style="font-size: 20px;"> 格式支持： .mp3 .m4a .mav</el-text>
                         </div>
                     </template>
                 </el-upload>
@@ -44,14 +30,15 @@
                     <div class="el-upload__text"><el-text class="mx-1" type="success"
                             size="large">将视频文件拖到此处，或<em>点击上传</em></el-text></div>
                     <template #tip>
-                        <div class="el-upload__tip">
+                        <!-- <div class="el-upload__tip">
                             格式支持： mkv/mp4/avi
-                        </div>
+                        </div> -->
                     </template>
                 </el-upload>
             </el-form-item>
             <el-form-item>
-                <el-button type="success" @click="submitFiles" style="width: 1000px; height: 50px;">上传</el-button>
+                <el-button type="success" @click="submitFiles" style="width: 1000px; height: 50px; font-size: 20px;">上传<el-icon class="el-icon--right"><Upload /></el-icon>
+                </el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -67,10 +54,9 @@ import axios from '@/axios'
 const switchStatus = ref(true)
 const textarea = ref('')
 const formRef = ref(null)
+const auidoTypeArr = ['mp3','m4a','wav']
 let audioList = []
 let videoList = []
-let uploadProgress = 0
-const dighumUrl = process.env.DIGHUM_URL;
 
 function switchTypes() {
 

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { onBeforeMount, onMounted } from 'vue';
+import { ElMessage } from 'element-plus';
 import { useRouter, useRoute } from 'vue-router'
 
 const dighumUrl = process.env.DIGHUM_URL;
@@ -31,14 +31,14 @@ instance.interceptors.request.use(
 instance.interceptors.response.use(
     (response) => response,
     (error) => {
-        // 处理特定的错误状态码，例如 401 表示未授权
-        if (error.response.status === 401 ) {
+        //处理特定的错误状态码，例如 401 表示未授权
+        if (error.response.status === 401 || error.response.status == 403) {
             // 清除 Token 并重定向到登录页面
-            localStorage.removeItem('token');
-            // 这里可以使用 router.push('/login') 来重定向
-            router.push('/login');
+            localStorage.removeItem('token')
+            alert("身份信息过期请重新登录！")
+            window.location.href = "/login";
         }
-        return Promise.reject(error);
+        Promise.reject(error);
     }
 );
 

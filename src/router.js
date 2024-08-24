@@ -4,16 +4,18 @@ import Login from '@/views/login/Login.vue';
 import Calender from './views/Calender.vue';
 import Upload from './views/resources/Upload.vue';
 import MyResources from './views/resources/MyResources.vue';
+import Register from './views/login/Register.vue';
 
 const routes = [
-  { path: '/', component: Login },
-  { path: '/login', component: Login },
+  { path: '/', redirect: '/login' },
+  { path: '/login', name: 'login', component: Login },
+  { path: '/register',  component: Register },
   {
-    path: '/homepage', component: Homepage,
+    path: '/homepage', name: 'homepage', component: Homepage,
     children: [
       { path: '', component: Calender },
-       { path: '/uploadRes', component: Upload },
-       { path: '/myResources', component: MyResources },
+      { path: '/uploadRes', component: Upload },
+      { path: '/myResources', component: MyResources },
     ]
   }
 

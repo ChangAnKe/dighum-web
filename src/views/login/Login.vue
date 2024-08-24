@@ -6,7 +6,7 @@
           style="max-width: 600px; max-height: 500px;">
           <img src="@/assets/images/svg/bld.svg" alt="Login Icon" style="margin-left: 30%;" />
           <el-text style="font-size: 13px; margin-left: 25px;">没有账户？</el-text><el-link type="primary" :underline="false"
-            style="font-size: 13px;">立即注册</el-link>
+            style="font-size: 13px;" @click="register()">立即注册</el-link>
           <el-form-item prop="userId">
             <el-input v-model="form.userId" prefix-icon="User" placeholder="手机号或邮箱" size="large"
               style="padding-top: 20px;" class="custom-input-height"></el-input>
@@ -14,13 +14,13 @@
 
           <el-form-item prop="password">
             <el-input type="password" v-model="form.password" prefix-icon="Lock" autocomplete="current-password"
-              placeholder="密码" size="large" style="padding-top: 30px;"><template #suffix>
+              placeholder="密码" size="large" show-password style="padding-top: 30px;"><template #suffix>
                 <el-button type="text" size="mini" @click="handleForgotPassword"
                   style="color: #2a598a; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">忘记密码</el-button>
               </template> </el-input>
           </el-form-item>
-          <el-button type="success" @click="loginRequest" size="large"
-            style="width: 500px; height: 50px; font-size: 20px; margin-top: 30px;">登录</el-button>
+          <el-button type="success" @click="loginRequest" size="large" @keydown.enter="handleKeydown()"
+            :loading="isLoading" style="width: 500px; height: 50px; font-size: 20px; margin-top: 30px;">登录</el-button>
         </el-form>
       </el-card>
     </transition>
@@ -28,19 +28,18 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
+import { useUserStore } from '@/stores/UseUserStore';
 
 const router = useRouter();
-
+const isLoading = ref(false);
 const form = reactive({
   userId: '',
   password: ''
 });
-
-
 const rules = reactive({
   userId: [
     { required: true, message: '请输入手机号或者邮箱', trigger: 'blur' },
@@ -51,15 +50,24 @@ const rules = reactive({
     { min: 6, max: 40, message: '长度在 6 到 40 个字符', trigger: 'blur' }
   ]
 });
-
 const loginForm = ref(null);
 const dighumUrl = process.env.DIGHUM_URL;
+const store = useUserStore();
 
 
+onMounted(() => {
+  window.addEventListener("keydown", handleKeydown);
+})
 
-  const loginRequest = (async() => {
+onUnmounted(() => {
+  window.removeEventListener("keydown", handleKeydown, false);
+})
+
+
+const loginRequest = (async () => {
   loginForm.value.validate(async (valid) => {
     if (valid) {
+      isLoading.value = true;
       let userId = form.userId;
       let email = ''
       let phoneNumber = ''
@@ -77,17 +85,21 @@ const dighumUrl = process.env.DIGHUM_URL;
           'Content-Type': 'application/json'
         }
       }).then(response => {
+        isLoading.value = false;
         //get token
         let token = response.data.token;
+        let userInfo = response.data;
         if (token == '' || token == undefined) {
           ElMessage.success('登录异常，请联系管理员！')
         } else {
           //存储token
           localStorage.setItem('token', token);
+          store.setUserInfo(userInfo);
           router.push('/homepage');
           ElMessage.success('登录成功！')
         }
       }).catch(error => {
+        isLoading.value = false;
         console.log('respose code:' + error.response.status)
         ElMessage.error(error.response.data)
       })
@@ -98,6 +110,16 @@ const dighumUrl = process.env.DIGHUM_URL;
 function handleForgotPassword() {
   window.location.href = '/resetPwd'
 }
+
+function handleKeydown(e) {
+  if (e.keyCode == '13' || e.keyCode == 100) {
+    loginRequest();
+  }
+}
+
+const register = (() => {
+  router.push('/register');
+})
 
 </script>
 
