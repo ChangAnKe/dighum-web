@@ -7,6 +7,9 @@ import vue from '@vitejs/plugin-vue'
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
+    server: {
+      host: '0.0.0.0'
+    },
     plugins: [
       vue(),
     ],
