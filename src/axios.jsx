@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import { useRouter, useRoute } from 'vue-router'
 
-const baseUrl = process.env.DIGHUM_BASE;
+const baseUrl = process.env.DIGHUM_URL;
 const router = useRouter();
 
 // 创建一个新的 Axios 实例

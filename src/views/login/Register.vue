@@ -31,7 +31,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
-import axios from 'axios'
+import axios from '@/axios'
 import { useRouter } from 'vue-router'
 
 const dighumUrl = process.env.DIGHUM_URL;
@@ -84,7 +84,7 @@ function validateConfirmPassword(rule, value, callback) {
 function submitForm() {
     registerFormRef.value.validate((valid) => {
         if (valid) {
-             axios.put(dighumUrl+'/v1/auth/user/register', registerForm, {
+             axios.put('/v1/auth/user/register', registerForm, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
