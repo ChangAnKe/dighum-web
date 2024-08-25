@@ -12,7 +12,7 @@ export default defineConfig(({ command, mode }) => {
     server: {
       host: '0.0.0.0',
       proxy: {
-        '/v1/': { // 获取请求中带 /api 的请求
+        [process.env.DIGHUM_BASE_API]: { // 获取请求中带 /api 的请求
           target: dighumUrl,  // 后台服务器的源
           changeOrigin: true
         }
