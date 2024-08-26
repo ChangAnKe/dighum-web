@@ -96,7 +96,7 @@ function beforeRemove(file, fileList) {
 
 // 提交文件
 function submitFiles() {
-    isLoading = true;
+    isLoading.value = true;
     // 创建 FormData 对象
     const formData = new FormData();
     // 添加文件和其他参数
