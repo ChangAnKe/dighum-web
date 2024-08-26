@@ -12,15 +12,15 @@ export default defineConfig(({ command, mode }) => {
   return {
     server: {
       host: '0.0.0.0',
-    //   open: true,
-    //   proxy: {
-    //     '/dighum': { // 获取请求中带 /api 的请求
-    //       target: 'http://bb.com',  // 后台服务器的源
-    //       secure: false,
-    //       changeOrigin: true,
-    //       rewrite: (path) => path.replace(/^\/dighum/, '/')
-    //   }
-    // }
+      open: true,
+      proxy: {
+        '/dighum': { // 获取请求中带 /api 的请求
+          target: 'https://dighum.aith.chat',  // 后台服务器的源
+          secure: true,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/dighum/, '/')
+      }
+    }
   },
     plugins: [
       vue(),
