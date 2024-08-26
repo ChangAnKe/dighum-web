@@ -10,16 +10,18 @@ const VUE_APP_BASE_URL = process.env.VUE_APP_BASE_URL;
 export default defineConfig(({ command, mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
   return {
-    server: {
-      host: '0.0.0.0',
-      proxy: {
-        '/dighum': { // 获取请求中带 /api 的请求
-          target: dighumUrl,  // 后台服务器的源
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/dighum/, '/')
-      }
-    }
-  },
+  //   server: {
+  //     host: '0.0.0.0',
+  //     open: true,
+  //     proxy: {
+  //       '/dighum': { // 获取请求中带 /api 的请求
+  //         target: 'http://bb.com',  // 后台服务器的源
+  //         secure: false,
+  //         changeOrigin: true,
+  //         rewrite: (path) => path.replace(/^\/dighum/, '/')
+  //     }
+  //   }
+  // },
     plugins: [
       vue(),
     ],
@@ -31,8 +33,7 @@ export default defineConfig(({ command, mode }) => {
   define: {
     __APP_ENV__: JSON.stringify(env.APP_ENV),
       'process.env': env
-  },
-  base: VUE_APP_BASE_URL
+  }
 }
 })
 
