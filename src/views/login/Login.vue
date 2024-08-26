@@ -118,6 +118,9 @@ function handleKeydown(e) {
 }
 
 const register = (() => {
+  if(localStorage.getItem('token')!=null) {
+    localStorage.removeItem('token');
+  }
   router.push('/register');
 })
 

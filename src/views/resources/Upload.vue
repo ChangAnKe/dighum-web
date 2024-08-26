@@ -12,13 +12,13 @@
                 <el-upload ref="audioUpload" class="upload-demo" drag multiple :auto-upload="false"
                     :file-list="audioList" limit=1 style="margin-top: 50px;" :before-upload="beforeAudioUpload"
                     :on-change="handleAudioChange"
-                    :accept="`.mp3,.m4a,.mav`">
+                    :accept="`.mp3,.m4a,.wav`">
                     <el-icon class="el-icon--upload"><upload-filled /></el-icon>
                     <div class="el-upload__text"><el-text class="mx-1" type="warning"
                             size="large">将音频文件拖到此处，或<em>点击上传</em></el-text></div>
                     <template #tip>
                         <div class="el-upload__tip">
-                            <el-text class="mx-1" type="warning" style="font-size: 20px;"> 格式支持： .mp3 .m4a .mav</el-text>
+                            <el-text class="mx-1" type="warning" style="font-size: 20px;"> 格式支持： .mp3 .m4a .wav</el-text>
                         </div>
                     </template>
                 </el-upload>
@@ -37,7 +37,7 @@
                 </el-upload>
             </el-form-item>
             <el-form-item>
-                <el-button type="success" @click="submitFiles" style="width: 1000px; height: 50px; font-size: 20px;">上传<el-icon class="el-icon--right"><Upload /></el-icon>
+                <el-button type="success" @click="submitFiles" style="width: 1000px; height: 50px; font-size: 20px;" :loading="isLoading">上传<el-icon class="el-icon--right"><Upload /></el-icon>
                 </el-button>
             </el-form-item>
         </el-form>
@@ -50,7 +50,7 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
 import axios from '@/axios'
 
-
+const isLoading = ref(false);
 const switchStatus = ref(true)
 const textarea = ref('')
 const formRef = ref(null)
@@ -96,13 +96,7 @@ function beforeRemove(file, fileList) {
 
 // 提交文件
 function submitFiles() {
-    console.log("audioList:", audioList);
-    console.log("videoList:", videoList);
-    // if (this.audioList.length === 0 || this.videoList.length === 0) {
-    //     ElMessage.error('请选择要上传的文件！');
-    //     return;
-    // }
-
+    isLoading = true;
     // 创建 FormData 对象
     const formData = new FormData();
     // 添加文件和其他参数
@@ -116,8 +110,10 @@ function submitFiles() {
             'Content-Type': 'multipart/form-data'
         }
     }).then(response => {
+        isLoading.value = false;
         ElMessage.success('文件上传成功！');
     }).catch(error => {
+        isLoading.value = false;
         ElMessage.error('文件上传失败!');
     });
 }
