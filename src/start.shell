@@ -1,0 +1,1 @@
+nohup npm run prod > output.log 2>&1 &
