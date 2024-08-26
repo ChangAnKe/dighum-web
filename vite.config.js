@@ -12,28 +12,34 @@ export default defineConfig(({ command, mode }) => {
   return {
     server: {
       host: '0.0.0.0',
-      open: true,
+      open: false,
       proxy: {
         '/dighum': { // 获取请求中带 /api 的请求
           target: 'https://dighum.aith.chat',  // 后台服务器的源
-          secure: true,
+          secure: false,
           changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/dighum/, '/')
+          rewrite: (path) => path.replace(/^\/dighum/, '')
+        },
+        // '/dev-dighum': { // 获取请求中带 /api 的请求
+        //   target: 'https://localhost:8080',  // 后台服务器的源
+        //   secure: false,
+        //   changeOrigin: true,
+        //   rewrite: (path) => path.replace(/^\/dighum/, '')
+        // }
       }
-    }
-  },
+    },
     plugins: [
       vue(),
     ],
-      resolve: {
-    alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url))
-    }
-  },
-  define: {
-    __APP_ENV__: JSON.stringify(env.APP_ENV),
+    resolve: {
+      alias: {
+        '@': fileURLToPath(new URL('./src', import.meta.url))
+      }
+    },
+    define: {
+      __APP_ENV__: JSON.stringify(env.APP_ENV),
       'process.env': env
+    }
   }
-}
 })
 

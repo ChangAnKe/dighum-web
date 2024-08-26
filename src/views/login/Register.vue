@@ -31,7 +31,8 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
-import axios from '@/axios'
+//import axios from '@/axios'
+import axios from '@/axios';
 import { useRouter } from 'vue-router'
 
 const dighumUrl = process.env.DIGHUM_URL;

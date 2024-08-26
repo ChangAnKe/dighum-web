@@ -31,7 +31,7 @@
 import { reactive, ref, onMounted, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '@/axios'
 import { useUserStore } from '@/stores/UseUserStore';
 
 const router = useRouter();
@@ -76,7 +76,7 @@ const loginRequest = (async () => {
       } else {
         phoneNumber = userId;
       }
-      await axios.post(dighumUrl + '/v1/auth/user/login', {
+      await axios.post('/v1/auth/user/login', {
         'phoneNumber': phoneNumber,
         'email': email,
         'password': form.password
