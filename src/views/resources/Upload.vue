@@ -113,6 +113,7 @@ function submitFiles() {
         isLoading.value = false;
         ElMessage.success('文件上传成功！');
     }).catch(error => {
+        console.log(error);
         isLoading.value = false;
         ElMessage.error('文件上传失败!');
     });

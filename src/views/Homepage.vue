@@ -21,7 +21,7 @@
       <el-container>
         <el-aside width="200px">
           <el-scrollbar>
-            <el-menu router :default-openeds="['1']" :default-active="$route.path">
+            <el-menu router :default-openeds="['1']">
               <el-sub-menu index="1">
                 <template #title>
                   <el-icon>
