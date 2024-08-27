@@ -16,7 +16,7 @@
                 </div>
             </template>
             <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + audio.resourceUrl"
-                :poster="dighumUrl + '/vauvi/audio.png'"
+                :poster="dighumUrl + '/vauvi/audio.gif'"
                 :id="audio.comKey.userId + '@_@' + audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
 
         </el-card>
