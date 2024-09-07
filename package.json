@@ -22,7 +22,7 @@
     "xgplayer": "^3.0.19"
   },
   "devDependencies": {
-    "vite": "^4.5.1",
-    "@vitejs/plugin-vue": "^4.5.2"
+    "@vitejs/plugin-vue": "^4.5.2",
+    "vite": "^4.5.1"
   }
 }

@@ -30,6 +30,7 @@ export default defineConfig(({ command, mode }) => {
     },
     plugins: [
       vue(),
+    
     ],
     resolve: {
       alias: {

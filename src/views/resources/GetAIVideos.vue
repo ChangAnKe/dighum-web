@@ -4,20 +4,18 @@
             <el-input v-model="resource.comKey.fileName" clearable />
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="getMyAudios" :loading="isLoading">查询</el-button>
+            <el-button type="primary" @click="getMyVideos" :loading="isLoading">查询</el-button>
         </el-form-item>
     </el-form>
     <div class="video-list">
-        <el-card v-for="(audio, index) in audios" :key="index" body-style="height: 100px"
-            :class="{ selected: isSelected }">
+        <el-card v-for="(video, index) in videos" :key="index" style="width: 250px;height: 200px;">
             <template #header>
-
                 <div class="card-header">
-                    <el-tooltip class="box-item" effect="dark" :content="audio.showFileName" placement="top-start">
-                        <span style="font-size: 15px;"><el-tag v-if="audio.tag" size="small" effect="dark"
-                                type="success" :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text v-if="audio.tag"> -
-                            </e-text>{{ audio.showFileName
-                            }}</span>
+                    <el-tooltip class="box-item" effect="dark" :content="video.showFileName" placement="top-start">
+                        <div class="card-header">
+                            <span style="font-size: 15px;">{{ video.showFileName
+                                }}</span>
+                        </div>
                     </el-tooltip>
                     <el-dropdown @command="handleCommand">
                         <span class="el-dropdown-link">
@@ -26,16 +24,17 @@
                         <template #dropdown>
                             <el-dropdown-menu>
                                 <el-dropdown-item command="download"
-                                    @click="downloadResource(audio)">下载</el-dropdown-item>
-                                <el-dropdown-item command="delete" @click="deleteResource(audio)">删除</el-dropdown-item>
+                                    @click="downloadResource(video)">下载</el-dropdown-item>
+                                <el-dropdown-item command="delete" @click="deleteResource(video)">删除</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
                 </div>
             </template>
-            <VideoPlayer width="160px" height="60px" :video-url="dighumUrl + audio.resourceUrl"
-                :poster="dighumUrl + audioVoverUrl"
-                :id="audio.comKey.userId + '@_@' + audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
+            <VideoPlayer v-if="video.status == 3" width="210px" height="120px"
+                :video-url="dighumUrl + video.resourceUrl" :poster="dighumUrl + video.coverUrl"
+                :id="video.comKey.userId + '@_@' + video.comKey.fileType + '@_@' + video.comKey.fileName" />
+            <el-text type="danger">{{ Status[video.status] }}</el-text>
         </el-card>
     </div>
 </template>
@@ -45,24 +44,23 @@ import { ref, reactive } from 'vue'
 import VideoPlayer from "@/components/videos/videoPlayer.vue"
 import axios from '@/axios'
 import { ElMessage, ElNotification } from 'element-plus'
-import { VoiceCloneType } from '@/common/VoiceCloneType'
+import { Status } from '@/common/Status'
 
 
 const dighumUrl = process.env.DIGHUM_URL;
-const audioVoverUrl = process.env.AUDIO_COVER_URL;
 
-let audios = reactive([])
+let videos = reactive([])
 const resource = reactive({
     comKey: {
-        fileType: "AU",
+        fileType: "VI",
         fileName: ""
-    }
+    },
+    tag: "AI"
 })
 
 const isLoading = ref(false);
-const isSelected = ref(true)
 
-const getMyAudios = async () => {
+const getMyVideos = async () => {
     isLoading.value = true;
     // 发送请求
     await axios.post("/v1/resource/getResources", resource, {
@@ -73,49 +71,50 @@ const getMyAudios = async () => {
         isLoading.value = false;
         if (response.status = '200') {
             if (response.data.length == 0) {
-                ElMessage.success('无满足条件的音频，请上传！');
+                ElMessage.success('无满足条件的视频，请上传！');
             } else {
                 //确保使用响应式的方式更新数组
-                audios.splice(0, audios.length, ...response.data);
+                videos.splice(0, videos.length, ...response.data);
             }
         } else {
-            ElMessage.error('获取音频列表异常，请联系管理员！');
+            ElMessage.error('获取视频列表异常，请联系管理员！');
         }
 
     }).catch(error => {
         isLoading.value = false;
-        ElMessage.error('获取音频列表失败，请联系管理员！');
+        ElMessage.error('获取视频列表失败，请联系管理员！');
     });
 }
 
-const downloadResource = (async (audio) => {
-    const response = await axios.get(dighumUrl + audio.resourceUrl, {
+const downloadResource = (async (video) => {
+    const response = await axios.get(dighumUrl + video.resourceUrl, {
         responseType: 'blob' // 设置响应类型为Blob
     });
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', audio.comKey.fileName); // 设置文件名
+    const fileExtension = video.resourceUrl.split('.').pop();
+    link.setAttribute('download', video.comKey.fileName + '.' + fileExtension); // 设置文件名
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link); // 清理
     window.URL.revokeObjectURL(url); // 释放URL对
 })
 
-function deleteResource(audio) {
-    axios.delete("/v1/resource/deleteResource", { data: audio }, {
+function deleteResource(video) {
+    axios.delete("/v1/resource/deleteResource", { data: video }, {
         headers: {
             'Content-Type': 'application/json'
         }
     }).then(response => {
         if (response.status = '200') {
-            const index = audios.findIndex(resource =>
-                resource.comKey.userId === audio.comKey.userId &&
-                resource.comKey.fileType === audio.comKey.fileType &&
-                resource.comKey.fileName === audio.comKey.fileName
+            const index = videos.findIndex(resource =>
+                resource.comKey.userId === video.comKey.userId &&
+                resource.comKey.fileType === video.comKey.fileType &&
+                resource.comKey.fileName === video.comKey.fileName
             );
             if (index !== -1) {
-                audios.splice(index, 1);
+                videos.splice(index, 1);
                 ElNotification({
                     title: 'Success',
                     message: '删除成功',
@@ -139,6 +138,7 @@ function deleteResource(audio) {
     });
 }
 
+
 </script>
 
 <style scoped>
@@ -158,18 +158,20 @@ function deleteResource(audio) {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
-    margin-left: 25px;
-    margin-top: 20px;
 }
 
 .card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    height: 10px;
 }
 
 .video-description {
     margin-top: 0.5rem;
+}
+
+.video-list {
+    margin-left: 25px;
+    margin-top: 20px;
 }
 </style>

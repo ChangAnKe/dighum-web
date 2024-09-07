@@ -1,20 +1,21 @@
 <template>
     <el-tabs v-model="activeName" type="card" class="tabs" >
+        <el-tab-pane label="数字人视频" name="dighum-videos" tab-click="getDighumVideos"><GetAIVideos /></el-tab-pane>
         <el-tab-pane label="我的视频" name="videos" tab-click="getVideos">
             <GetVideos />
         </el-tab-pane>
         <el-tab-pane label="我的音频" name="audios" tab-click="getAudios"> <GetAudios /></el-tab-pane>
-        <el-tab-pane label="数字人视频" name="dishum-videos" tab-click="getDighumVideos">数字人视频</el-tab-pane>
     </el-tabs>
 </template>
 
 <script lang="ts" setup>
 import { ref } from 'vue'
 import type { TabsPaneContext } from 'element-plus'
+import GetAIVideos from './GetAIVideos.vue';
 import GetVideos from './GetVideos.vue';
 import GetAudios from './GetAudios.vue';
 
-const activeName = ref('videos')
+const activeName = ref('dighum-videos')
 
 
 // const handleClick = (tab: TabsPaneContext, event: Event) => {

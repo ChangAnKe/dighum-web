@@ -2,9 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router';
 import Homepage from './views/Homepage.vue';
 import Login from '@/views/login/Login.vue';
 import Calender from './views/Calender.vue';
-import Upload from './views/resources/Upload.vue';
+import CreateVideo from './views/resources/CreateVideo.vue';
 import MyResources from './views/resources/MyResources.vue';
 import Register from './views/login/Register.vue';
+import VoiceClone from './views/resources/VoiceClone.vue';
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -14,8 +15,9 @@ const routes = [
     path: '/homepage', name: 'homepage', component: Homepage,
     children: [
       { path: '', component: Calender },
-      { path: '/uploadRes', component: Upload },
+      { path: '/createVideo', component: CreateVideo },
       { path: '/myResources', component: MyResources },
+      { path: '/voiceClone', component: VoiceClone },
     ]
   }
 

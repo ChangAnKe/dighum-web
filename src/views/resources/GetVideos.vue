@@ -11,7 +11,7 @@
         <el-card v-for="(video, index) in videos" :key="index" style="width: 250px;height: 200px;">
             <template #header>
                 <div class="card-header">
-                    <span style="font-size: 15px;">{{ video.comKey.fileName
+                    <span style="font-size: 15px;">{{ video.showFileName
                         }}</span>
                 </div>
             </template>
