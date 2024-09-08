@@ -10,7 +10,7 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item>详情</el-dropdown-item>
-                <el-dropdown-item>余额: <el-text class="mx-1" type="primary">{{ userInfo.balance }}</el-text>
+                <el-dropdown-item>余额: <el-text class="mx-1" type="primary">{{ secondsToMinutes(userInfo.balance) }}</el-text>
                   分钟</el-dropdown-item>
                 <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
@@ -91,6 +91,9 @@ const logout = (() => {
   router.push('/login')
 })
 
+function secondsToMinutes(seconds: number) {
+  return (seconds / 60).toFixed(1);
+}
 </script>
 
 <style scoped>
