@@ -481,7 +481,8 @@ const uploadAndCopyVideo = (async () => {
             axios.put("/v1/resource/dighumCreate", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
-                }
+                },
+                timeout: 60000
             }).then(response => {
                 cloneLoding.value = false
                 uploadDrawer.value = false
