@@ -146,29 +146,31 @@ const submit = (async () => {
             formData.append('type', form.type)
             formData.append('fileName', form.audioName)
             formData.append('audioFile', audioList[0].raw);
-            axios.put("/v1/resource/voiceCreate", formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            }).then(response => {
+            try {
+                let response = await axios.post("/v1/resource/voiceCreate", formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data'
+                    },
+                    timeout: 30000
+                });
                 loading.value = false
-                uploadDrawer.value = false
                 if (response.status == '200') {
                     var code = response.data.code;
-                    if (code == '0' ||code == '200' ) {
+                    if (code == '0' || code == '200') {
                         ElMessage.success('文件上传成功！');
+                        uploadDrawer.value = false
                     } else {
                         ElMessage.error('上传失败: ' + response.data.remarks);
                     }
                 } else {
                     ElMessage.error('异常，请联系管理员!');
                 }
-            }).catch(error => {
-                loading.value = false
-                uploadDrawer.value = false
-                console.log(error);
+            } catch (error) {
+                loading.value = false;
+                console.error(error);
                 ElMessage.error('文件上传失败!');
-            });
+                uploadDrawer.value = false;
+            }
         }
     })
 })
