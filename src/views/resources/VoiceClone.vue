@@ -147,7 +147,7 @@ const submit = (async () => {
             formData.append('fileName', form.audioName)
             formData.append('audioFile', audioList[0].raw);
             try {
-                let response = await axios.post("/v1/resource/voiceCreate", formData, {
+                let response = await axios.put("/v1/resource/voiceCreate", formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
