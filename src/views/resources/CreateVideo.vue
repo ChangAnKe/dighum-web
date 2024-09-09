@@ -383,12 +383,35 @@ function toggleCheckmarkVi(index, video) {
     }
 }
 
+function validBeforeCreateAIData(reqJson) {
+    if ("0" === form.output) {
+        if (isNull(reqJson.voice_id) || isNull(reqJson.video_url)) {
+            ElMessage.success('请选择音频或者分身！');
+            return false;
+        }
+    }
+    if ("1" === form.output && isNull(reqJson.voice_id)) {
+        ElMessage.success('请选择音频！');
+        return false;
+    }
+    if (reqJson.fileName == null || reqJson.fileName == '') {
+        ElMessage.success('未获取到文件名！');
+        return false;
+    }
+    return true;
+}
+
+function isNull(obj) {
+    if (obj == null || obj == '') {
+        return true;
+    }
+    return false;
+}
+
 // 提交文件
 function submitFiles() {
     isLoading.value = true;
     var outputType = form.output;
-    // 创建 FormData 对象
-    const formData = new FormData();
     //文本驱动
     if (isTextDrive.value) {
         let reqJson = {
@@ -400,11 +423,14 @@ function submitFiles() {
             only_generate_audio: null,
             fileName: fileName
         }
-        if ("0" === form.output) {
+        if ("0" === outputType && !isNull(resUrl)) {
             reqJson.video_url = dighumUrl + resUrl;
         }
-        if ("1" === form.output) {
+        if ("1" === outputType) {
             reqJson.only_generate_audio = 1;
+        }
+        if (!validBeforeCreateAIData(reqJson)) {
+            return;
         }
         // 发送请求
         axios.post("/v1/resource/createTask/text", reqJson, {
@@ -417,7 +443,9 @@ function submitFiles() {
             errorResponse(error);
         });
     }
-    // // 添加文件和其他参数
+    // 添加文件和其他参数
+    // 创建 FormData 对象
+    // const formData = new FormData();
     // formData.append('fileCom', isTextDrive.value ? 'AV' : 'TV');
     // formData.append('audio', audioList[0].raw);
     // formData.append('video', videoList[0].raw);
