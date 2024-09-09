@@ -462,6 +462,28 @@ function errorResponse(error) {
     ElMessage.error('异常：' + error);
 }
 
+async function checkBeforeSubmit(file) {
+    const isLt500M = file.size / 1024 / 1024 <= 500;
+    if (!isLt500M) {
+        ElMessage.error('文件大小不能超过500MB!');
+        return false;
+    }
+    //let reader = new FileReader();
+    var url = URL.createObjectURL(file.raw);
+    var audioElement = new Audio(url);
+    const duration = await new Promise((resolve) => {
+        audioElement.addEventListener('loadedmetadata', function () {
+            resolve(parseInt(audioElement.duration));
+        })
+    })
+    //时长为秒
+    if (duration < 5 || duration > 1800) {
+        ElMessage.error('音频时长需要5秒~30分钟!');
+        return false;
+    }
+    return true;
+}
+
 
 const uploadAndCopyVideo = (async () => {
     copyForm.value.validate(async (valid) => {
@@ -474,6 +496,10 @@ const uploadAndCopyVideo = (async () => {
                 })
                 return;
             }
+            const result = await checkBeforeSubmit(uploadVideoList[0]);
+            if (!result) {
+                return;
+            }
             cloneLoding.value = true
             const formData = new FormData();
             formData.append('fileName', modelDighumForm.videoName)
@@ -482,7 +508,7 @@ const uploadAndCopyVideo = (async () => {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
-                timeout: 60000
+                timeout: 0
             }).then(response => {
                 cloneLoding.value = false
                 uploadDrawer.value = false
