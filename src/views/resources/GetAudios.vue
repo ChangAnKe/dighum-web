@@ -15,7 +15,8 @@
                 <div class="card-header">
                     <el-tooltip class="box-item" effect="dark" :content="audio.showFileName" placement="top-start">
                         <span style="font-size: 15px;"><el-tag v-if="audio.tag" size="small" effect="dark"
-                                type="success" :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text v-if="audio.tag"> -
+                                type="success" :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text
+                                v-if="audio.tag"> -
                             </e-text>{{ audio.showFileName
                             }}</span>
                     </el-tooltip>
@@ -56,7 +57,8 @@ const resource = reactive({
     comKey: {
         fileType: "AU",
         fileName: ""
-    }
+    },
+    tag: 'ALL'
 })
 
 const isLoading = ref(false);
