@@ -66,7 +66,8 @@ const getMyVideos = async () => {
     await axios.post("/v1/resource/getResources", resource, {
         headers: {
             'Content-Type': 'application/json'
-        }
+        },
+        timeout: 20000
     }).then(response => {
         isLoading.value = false;
         if (response.status = '200') {
@@ -158,6 +159,8 @@ function deleteResource(video) {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+    margin-left: 25px;
+    margin-top: 20px;
 }
 
 .card-header {
@@ -168,10 +171,5 @@ function deleteResource(video) {
 
 .video-description {
     margin-top: 0.5rem;
-}
-
-.video-list {
-    margin-left: 25px;
-    margin-top: 20px;
 }
 </style>

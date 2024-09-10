@@ -11,8 +11,23 @@
         <el-card v-for="(video, index) in videos" :key="index" style="width: 250px;height: 200px;">
             <template #header>
                 <div class="card-header">
-                    <span style="font-size: 15px;">{{ video.showFileName
-                        }}</span>
+                    <el-tooltip class="box-item" effect="dark" :content="video.showFileName" placement="top-start">
+                            <span style="font-size: 15px;">{{ video.showFileName
+                                }}</span>
+                    </el-tooltip>
+                    <el-dropdown @command="handleCommand">
+                        <span class="el-dropdown-link">
+                            <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                        </span>
+                        <template #dropdown>
+                            <el-dropdown-menu>
+                                <el-dropdown-item command="download"
+                                    @click="downloadResource(video)">下载</el-dropdown-item>
+                                <el-dropdown-item command="delete"
+                                    @click="deleteResource(video, videos)">删除</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </template>
+                    </el-dropdown>
                 </div>
             </template>
             <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + video.resourceUrl"
@@ -28,6 +43,7 @@ import { ref, reactive } from 'vue'
 import VideoPlayer from "@/components/videos/videoPlayer.vue"
 import axios from '@/axios'
 import { ElMessage } from 'element-plus'
+import { deleteResource, downloadResource } from '@/common/ResourceUtils'
 
 
 const dighumUrl = process.env.DIGHUM_URL;
@@ -72,7 +88,6 @@ const getMyVideos = async () => {
 </script>
 
 <style scoped>
-
 .demo-form-inline .el-input {
     --el-input-width: 220px;
 }
@@ -89,6 +104,8 @@ const getMyVideos = async () => {
     display: flex;
     flex-wrap: wrap;
     gap: 1rem;
+    margin-left: 25px;
+    margin-top: 20px;
 }
 
 .card-header {
@@ -99,10 +116,5 @@ const getMyVideos = async () => {
 
 .video-description {
     margin-top: 0.5rem;
-}
-
-.video-list {
-    margin-left: 25px;
-    margin-top: 20px;
 }
 </style>
