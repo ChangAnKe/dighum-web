@@ -1,7 +1,7 @@
 <template>
   <div class="login-container">
     <transition name="fade">
-      <el-card style="max-width: 600px">
+      <el-card style="max-width: 600px;">
         <el-form ref="loginForm" :model="form" :rules="rules" autocomplete="on"
           style="max-width: 600px; max-height: 500px;">
           <img src="@/assets/images/svg/bld.svg" alt="Login Icon" style="margin-left: 30%;" />
@@ -24,7 +24,12 @@
         </el-form>
       </el-card>
     </transition>
+    <div class="footer">
+      <el-link href="https://beian.miit.gov.cn" type="warning" target="_blank">备案号：沪ICP备12345678号-1</el-link>
+    </div>
   </div>
+
+
 </template>
 
 <script setup>
@@ -118,7 +123,7 @@ function handleKeydown(e) {
 }
 
 const register = (() => {
-  if(localStorage.getItem('token')!=null) {
+  if (localStorage.getItem('token') != null) {
     localStorage.removeItem('token');
   }
   router.push('/register');
@@ -165,5 +170,20 @@ const register = (() => {
 
 .el-link .el-icon--right.el-icon {
   vertical-align: text-bottom;
+}
+
+.footer {
+  position: absolute;
+  /* 使用绝对定位 */
+  bottom: 0;
+  /* 距离底部边缘为0 */
+  left: 50%;
+  /* 水平居中 */
+  transform: translateX(-50%);
+  /* 对于非块级元素的居中 */
+  text-align: center;
+  /* 文本水平居中 */
+  padding: 10px;
+  /* 添加一些内边距以避免粘连到底部边缘 */
 }
 </style>
