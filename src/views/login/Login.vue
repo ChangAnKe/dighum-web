@@ -25,7 +25,7 @@
       </el-card>
     </transition>
     <div class="footer">
-      <el-link href="https://beian.miit.gov.cn" type="warning" target="_blank">备案号：沪ICP备12345678号-1</el-link>
+      <el-link href="https://beian.miit.gov.cn" type="warning" target="_blank">备案号：京ICP备2024086453号</el-link>
     </div>
   </div>
 
