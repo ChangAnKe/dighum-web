@@ -162,6 +162,7 @@ const submit = (async () => {
                 loading.value = false
                 if (response.status == '200') {
                     var code = response.data.code;
+                    console.log('create model code:' + code)
                     if (code == '0' || code == '200') {
                         ElMessage.success('AI克隆成功！');
                         uploadDrawer.value = false
