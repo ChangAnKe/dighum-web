@@ -13,7 +13,7 @@
             <template #header>
 
                 <div class="card-header">
-                    <el-tooltip class="box-item" effect="dark" :content="audio.showFileName" placement="top-start">
+                    <el-tooltip class="box-item" effect="dark" :content=" moment(audio.createDate).utc().tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss')+': '+audio.showFileName" placement="top-start">
                         <span style="font-size: 15px;"><el-tag v-if="audio.tag" size="small" effect="dark"
                                 type="success" :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text
                                 v-if="audio.tag"> -
@@ -47,6 +47,8 @@ import VideoPlayer from "@/components/videos/videoPlayer.vue"
 import axios from '@/axios'
 import { ElMessage, ElNotification } from 'element-plus'
 import { VoiceCloneType } from '@/common/VoiceCloneType'
+import moment from 'moment-timezone';
+import { deleteResource, downloadResource } from '@/common/ResourceUtils'
 
 
 const dighumUrl = process.env.DIGHUM_URL;
@@ -90,56 +92,56 @@ const getMyAudios = async () => {
     });
 }
 
-const downloadResource = (async (audio) => {
-    const response = await axios.get(dighumUrl + audio.resourceUrl, {
-        responseType: 'blob' // 设置响应类型为Blob
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', audio.comKey.fileName); // 设置文件名
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link); // 清理
-    window.URL.revokeObjectURL(url); // 释放URL对
-})
+// const downloadResource = (async (audio) => {
+//     const response = await axios.get(dighumUrl + audio.resourceUrl, {
+//         responseType: 'blob' // 设置响应类型为Blob
+//     });
+//     const url = window.URL.createObjectURL(new Blob([response.data]));
+//     const link = document.createElement('a');
+//     link.href = url;
+//     link.setAttribute('download', audio.comKey.fileName); // 设置文件名
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link); // 清理
+//     window.URL.revokeObjectURL(url); // 释放URL对
+// })
 
-function deleteResource(audio) {
-    axios.delete("/v1/resource/deleteResource", { data: audio }, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(response => {
-        if (response.status = '200') {
-            const index = audios.findIndex(resource =>
-                resource.comKey.userId === audio.comKey.userId &&
-                resource.comKey.fileType === audio.comKey.fileType &&
-                resource.comKey.fileName === audio.comKey.fileName
-            );
-            if (index !== -1) {
-                audios.splice(index, 1);
-                ElNotification({
-                    title: 'Success',
-                    message: '删除成功',
-                    type: 'success',
-                });
-            }
-        } else {
-            ElNotification({
-                title: 'Error ',
-                message: '删除失败，请联系管理员！',
-                type: 'error',
-            })
-        }
+// function deleteResource(audio) {
+//     axios.delete("/v1/resource/deleteResource", { data: audio }, {
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     }).then(response => {
+//         if (response.status = '200') {
+//             const index = audios.findIndex(resource =>
+//                 resource.comKey.userId === audio.comKey.userId &&
+//                 resource.comKey.fileType === audio.comKey.fileType &&
+//                 resource.comKey.fileName === audio.comKey.fileName
+//             );
+//             if (index !== -1) {
+//                 audios.splice(index, 1);
+//                 ElNotification({
+//                     title: 'Success',
+//                     message: '删除成功',
+//                     type: 'success',
+//                 });
+//             }
+//         } else {
+//             ElNotification({
+//                 title: 'Error ',
+//                 message: '删除失败，请联系管理员！',
+//                 type: 'error',
+//             })
+//         }
 
-    }).catch(error => {
-        ElNotification({
-            title: 'Error ',
-            message: '内部异常，请联系管理员！' + error,
-            type: 'error',
-        })
-    });
-}
+//     }).catch(error => {
+//         ElNotification({
+//             title: 'Error ',
+//             message: '内部异常，请联系管理员！' + error,
+//             type: 'error',
+//         })
+//     });
+// }
 
 </script>
 

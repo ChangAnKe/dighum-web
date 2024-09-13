@@ -15,7 +15,7 @@ const downloadResource = (async (resource) => {
         fileName = fileName + '.' + resource.resourceUrl.split('.').pop();
     }
     let file
-    link.setAttribute('download', resource.comKey.fileName); // 设置文件名
+    link.setAttribute('download', fileName); // 设置文件名
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link); // 清理

@@ -147,7 +147,13 @@ const submit = (async () => {
             formData.append('fileName', form.audioName)
             formData.append('audioFile', audioList[0].raw);
             try {
-                let response = await axios.put("/v1/resource/voiceCreate", formData, {
+                // let response = await axios.put("/v1/resource/voiceCreate", formData, {
+                //     headers: {
+                //         'Content-Type': 'multipart/form-data'
+                //     },
+                //     timeout: 30000
+                // });
+                let response = await axios.put("/v1/resource/createModel", formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
@@ -157,10 +163,10 @@ const submit = (async () => {
                 if (response.status == '200') {
                     var code = response.data.code;
                     if (code == '0' || code == '200') {
-                        ElMessage.success('文件上传成功！');
+                        ElMessage.success('AI克隆成功！');
                         uploadDrawer.value = false
                     } else {
-                        ElMessage.error('上传失败: ' + response.data.remarks);
+                        ElMessage.error('AI克隆失败: ' + response.data.remarks);
                     }
                 } else {
                     ElMessage.error('异常，请联系管理员!');
@@ -168,7 +174,7 @@ const submit = (async () => {
             } catch (error) {
                 loading.value = false;
                 console.error(error);
-                ElMessage.error('文件上传失败!');
+                ElMessage.error('AI克隆失败!');
                 uploadDrawer.value = false;
             }
         }

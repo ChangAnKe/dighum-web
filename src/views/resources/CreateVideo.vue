@@ -14,7 +14,7 @@
                     </template>
                     <el-text>输出设置</el-text>
                     <el-radio-group v-model="form.output" style="margin-left: 30px;">
-                        <el-radio value="0">驱动视频</el-radio>
+                        <!-- <el-radio value="0">驱动视频</el-radio> -->
                         <el-radio value="1">仅音频</el-radio>
                     </el-radio-group>
                 </el-form-item>
@@ -59,7 +59,7 @@
                         <el-text type="warning" v-if="audios.length == 0">无声音，需先进行声音克隆！</el-text>
                     </el-form-item>
                 </el-form-item>
-                <el-form-item>
+                <!-- <el-form-item>
                     <el-form-item v-if="fenshenShow">
                         <template #label>
                             <span class="gjxxLabel">分身选择</span>
@@ -90,7 +90,7 @@
                         </template>
                         <el-text type="warning" v-if="videos.length == 0">无分身，可以先复刻分身！</el-text>
                     </el-form-item>
-                </el-form-item>
+                </el-form-item> -->
             </div>
             <!-- 音频驱动 -->
             <div v-if="!isTextDrive">
@@ -128,7 +128,7 @@
                     <el-form-item>
                         <template #label>
                             <span class="gjxxLabel">分身选择</span>
-                            <el-button style="margin-left: 20px;" type="primary" @click="openDrawer">点击复刻分身</el-button>
+                            <el-button style="margin-left: 20px;" type="primary" @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos"><Refresh /></el-icon>
                             <div class="card-container">
                                 <el-card v-for="(video, index) in videos" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === viIndex }">
@@ -250,7 +250,7 @@ const formRef = ref(null)
 const outputType = ref('0')
 const uploadDrawer = ref(false)
 let form = reactive({
-    output: '0',
+    output: '1',
     textarea: ''
 })
 let audioList = []
@@ -273,7 +273,7 @@ const resourceAudios = reactive({
     comKey: {
         fileType: "AU",
     },
-    tag: 'ALL'
+    tag: 'AI-Model'
 })
 
 const resourceVideos = reactive({
@@ -302,7 +302,7 @@ watch(isTextDrive, (newValue, oldValue) => {
 
 const loadMyAudios = async () => {
     if (!isTextDrive.value) {
-        resourceAudios.tag = '';
+        resourceAudios.tag = 'AI';
     }
     // 发送请求
     await axios.post("/v1/resource/getResources", resourceAudios, {
@@ -341,7 +341,7 @@ const loadMyVideos = async () => {
 }
 
 onMounted(() => {
-    if (form.output === '0') {
+    if (form.output === '1') {
         loadMyAudios();
         loadMyVideos();
     }
@@ -363,12 +363,14 @@ const auIndex = ref(-1)
 let auVoiceId = ''
 let fileName = ''
 let audioUrl = ''
+let fishId = ''
 function toggleCheckmarkAu(index, audio) {
     auIndex.value = index
     auVoiceId = audio.voiceId
     audioUrl = audio.resourceUrl
     if ("1" === form.output) {
         fileName = audio.comKey.fileName
+        fishId = audio.fishId
     }
 }
 
@@ -378,7 +380,7 @@ let resUrl = ''
 function toggleCheckmarkVi(index, video) {
     viIndex.value = index
     resUrl = video.resourceUrl
-    if ("0" === form.output || !isTextDrive) {
+    if ("0" === form.output || !isTextDrive.value) {
         fileName = video.comKey.fileName
     }
 }
@@ -390,7 +392,11 @@ function validBeforeCreateAIData(reqJson) {
             return false;
         }
     }
-    if ("1" === form.output && isNull(reqJson.voice_id)) {
+    // if ("1" === form.output && isNull(reqJson.voice_id)) {
+    //     ElMessage.success('请选择音频！');
+    //     return false;
+    // }
+    if ("1" === form.output && isNull(reqJson.fishId)) {
         ElMessage.success('请选择音频！');
         return false;
     }
@@ -421,7 +427,8 @@ function submitFiles() {
             voice_type: 9,
             video_url: '',
             only_generate_audio: null,
-            fileName: fileName
+            fileName: fileName,
+            fishId: fishId
         }
         if ("0" === outputType && !isNull(resUrl)) {
             reqJson.video_url = dighumUrl + resUrl;
@@ -436,7 +443,8 @@ function submitFiles() {
         axios.post("/v1/resource/createTask/text", reqJson, {
             headers: {
                 'Content-Type': 'application/json'
-            }
+            },
+            timeout: 120000
         }).then(response => {
             normalResponse(response);
         }).catch(error => {
@@ -476,12 +484,12 @@ function normalResponse(response) {
     if (response.status == '200') {
         var code = response.data.code;
         if (code == '0' || code == '200') {
-            ElMessage.success('数字分身处理中，稍后可查询下载！')
+            ElMessage.success('处理中，稍后可查询下载！')
         } else {
-            ElMessage.error('生成数字分身失败: ' + response.data.remarks);
+            ElMessage.error('失败: ' + response.data.remarks);
         }
     } else {
-        ElMessage.error('数字人视频生成异常，请联系管理员!');
+        ElMessage.error('内部异常，请联系管理员!');
     }
 }
 
@@ -690,5 +698,9 @@ const uploadAndCopyVideo = (async () => {
         transform: rotate(-45deg);
         color: #000;
     }
+}
+.el-icon {
+    margin-left: 20px;
+    cursor: pointer;
 }
 </style>
