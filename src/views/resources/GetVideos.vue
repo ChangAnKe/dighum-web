@@ -11,7 +11,7 @@
         <el-card v-for="(video, index) in videos" :key="index" style="width: 250px;height: 200px;">
             <template #header>
                 <div class="card-header">
-                    <el-tooltip class="box-item" effect="dark" :content="video.showFileName" placement="top-start">
+                    <el-tooltip class="box-item" effect="dark" :content=" moment(video.createDate).format('YYYY-MM-DD HH:mm:ss')+': '+video.showFileName" placement="top-start">
                             <span style="font-size: 15px;">{{ video.showFileName
                                 }}</span>
                     </el-tooltip>
@@ -44,6 +44,7 @@ import VideoPlayer from "@/components/videos/videoPlayer.vue"
 import axios from '@/axios'
 import { ElMessage } from 'element-plus'
 import { deleteResource, downloadResource } from '@/common/ResourceUtils'
+import moment from 'moment-timezone';
 
 
 const dighumUrl = process.env.DIGHUM_URL;
