@@ -46,6 +46,7 @@ import axios from '@/axios'
 import { ElMessage, ElNotification } from 'element-plus'
 import { Status } from '@/common/Status'
 import moment from 'moment-timezone'
+import { deleteResource, downloadResource } from '@/common/ResourceUtils'
 
 
 const dighumUrl = process.env.DIGHUM_URL;
@@ -88,57 +89,57 @@ const getMyVideos = async () => {
     });
 }
 
-const downloadResource = (async (video) => {
-    const response = await axios.get(dighumUrl + video.resourceUrl, {
-        responseType: 'blob' // 设置响应类型为Blob
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
-    const fileExtension = video.resourceUrl.split('.').pop();
-    link.setAttribute('download', video.comKey.fileName + '.' + fileExtension); // 设置文件名
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link); // 清理
-    window.URL.revokeObjectURL(url); // 释放URL对
-})
+// const downloadResource = (async (video) => {
+//     const response = await axios.get(dighumUrl + video.resourceUrl, {
+//         responseType: 'blob' // 设置响应类型为Blob
+//     });
+//     const url = window.URL.createObjectURL(new Blob([response.data]));
+//     const link = document.createElement('a');
+//     link.href = url;
+//     const fileExtension = video.resourceUrl.split('.').pop();
+//     link.setAttribute('download', video.comKey.fileName + '.' + fileExtension); // 设置文件名
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link); // 清理
+//     window.URL.revokeObjectURL(url); // 释放URL对
+// })
 
-function deleteResource(video) {
-    axios.delete("/v1/resource/deleteResource", { data: video }, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(response => {
-        if (response.status = '200') {
-            const index = videos.findIndex(resource =>
-                resource.comKey.userId === video.comKey.userId &&
-                resource.comKey.fileType === video.comKey.fileType &&
-                resource.comKey.fileName === video.comKey.fileName
-            );
-            if (index !== -1) {
-                videos.splice(index, 1);
-                ElNotification({
-                    title: 'Success',
-                    message: '删除成功',
-                    type: 'success',
-                });
-            }
-        } else {
-            ElNotification({
-                title: 'Error ',
-                message: '删除失败，请联系管理员！',
-                type: 'error',
-            })
-        }
+// function deleteResource(video) {
+//     axios.delete("/v1/resource/deleteResource", { data: video }, {
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     }).then(response => {
+//         if (response.status = '200') {
+//             const index = videos.findIndex(resource =>
+//                 resource.comKey.userId === video.comKey.userId &&
+//                 resource.comKey.fileType === video.comKey.fileType &&
+//                 resource.comKey.fileName === video.comKey.fileName
+//             );
+//             if (index !== -1) {
+//                 videos.splice(index, 1);
+//                 ElNotification({
+//                     title: 'Success',
+//                     message: '删除成功',
+//                     type: 'success',
+//                 });
+//             }
+//         } else {
+//             ElNotification({
+//                 title: 'Error ',
+//                 message: '删除失败，请联系管理员！',
+//                 type: 'error',
+//             })
+//         }
 
-    }).catch(error => {
-        ElNotification({
-            title: 'Error ',
-            message: '内部异常，请联系管理员！' + error,
-            type: 'error',
-        })
-    });
-}
+//     }).catch(error => {
+//         ElNotification({
+//             title: 'Error ',
+//             message: '内部异常，请联系管理员！' + error,
+//             type: 'error',
+//         })
+//     });
+// }
 
 
 </script>
