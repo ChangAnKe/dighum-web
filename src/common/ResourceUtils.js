@@ -11,7 +11,7 @@ const downloadResource = (async (resource) => {
     }
     let notification = ElNotification({
         title: fileName + '下载中:',
-        message: '进度' + downloadProgress + '%',
+        message: '进度' + downloadProgress.value + '%',
         type: 'success',
         duration: 0, // 不自动关闭
     })
