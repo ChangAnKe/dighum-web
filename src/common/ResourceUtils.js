@@ -20,8 +20,8 @@ const downloadResource = (async (resource) => {
         onDownloadProgress: (progressEvent) => {
             if (progressEvent.lengthComputable) {
                 const complete = (progressEvent.loaded / progressEvent.total) * 100;
-                downloadProgress = Math.round(complete);
-                if(downloadProgress==100) {
+                downloadProgress.value = Math.round(complete);
+                if(downloadProgress.value==100) {
                     notification.close();
                 }
             }
