@@ -1,23 +1,21 @@
 import axios from '@/axios'
 import { ElNotification } from 'element-plus'
 
-const env = process.env.ENV;
 const dighumUrl = process.env.DIGHUM_URL;
-const dighumInternalUrl = process.env.DIGHUM_INTERNAL_URL;
 const downloadResource = (async (resource) => {
+    // const response = await axios.get(dighumUrl + resource.resourceUrl, {
+    //     responseType: 'blob', // 设置响应类型为Blob
+    //     timeout: 300000
+    // });
     let fileName = resource.comKey.fileName;
     if (!resource.comKey.fileName.includes(".")) {
         fileName = fileName + '.' + resource.resourceUrl.split('.').pop();
     }
-    const response = await axios.get((env == 'prod' ? dighumInternalUrl : dighumUrl) + resource.resourceUrl, {
-        responseType: 'blob', // 设置响应类型为Blob
-        timeout: 300000
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
+    //const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
-    link.href = url;
-
-    link.setAttribute('download', fileName); // 设置文件名
+    link.href = dighumUrl + resource.resourceUrl;
+    //link.setAttribute('download', fileName); // 设置文件名
+    link.setAttribute('target', '_blank');
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link); // 清理

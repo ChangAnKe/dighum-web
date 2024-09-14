@@ -512,7 +512,7 @@ async function checkBeforeSubmit(file) {
             resolve(parseInt(audioElement.duration));
         })
     })
-    //时长为秒
+    时长为秒
     if (duration < 5 || duration > 1800) {
         ElMessage.error('音频时长需要5秒~30分钟!');
         return false;
