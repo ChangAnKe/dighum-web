@@ -2,13 +2,12 @@ import axios from '@/axios'
 import { ElNotification } from 'element-plus'
 
 const dighumUrl = process.env.DIGHUM_URL;
-
+const downloadProgress = ref(0)
 const downloadResource = (async (resource) => {
     let fileName = resource.comKey.fileName;
     if (!resource.comKey.fileName.includes(".")) {
         fileName = fileName + '.' + resource.resourceUrl.split('.').pop();
     }
-    let downloadProgress = 0;
     let notification =  ElNotification({
         title: fileName+'下载中:',
         message: '进度'+downloadProgress+'%',
