@@ -1,32 +1,17 @@
 import axios from '@/axios'
 import { ElNotification } from 'element-plus'
-import { ref } from 'vue'
 
+const env = process.env.ENV;
 const dighumUrl = process.env.DIGHUM_URL;
-const downloadProgress = ref(0)
+const dighumInternalUrl = process.env.DIGHUM_INTERNAL_URL;
 const downloadResource = (async (resource) => {
     let fileName = resource.comKey.fileName;
     if (!resource.comKey.fileName.includes(".")) {
         fileName = fileName + '.' + resource.resourceUrl.split('.').pop();
     }
-    let notification = ElNotification({
-        title: fileName + '下载中:',
-        message: '进度' + downloadProgress.value + '%',
-        type: 'success',
-        duration: 0, // 不自动关闭
-    })
-    const response = await axios.get(dighumUrl + resource.resourceUrl, {
+    const response = await axios.get((env == 'prod' ? dighumInternalUrl : dighumUrl) + resource.resourceUrl, {
         responseType: 'blob', // 设置响应类型为Blob
-        timeout: 300000,
-        onDownloadProgress: (progressEvent) => {
-            if (progressEvent.lengthComputable) {
-                const complete = (progressEvent.loaded / progressEvent.total) * 100;
-                downloadProgress.value = Math.round(complete);
-                if (downloadProgress.value == 100) {
-                    notification.close();
-                }
-            }
-        }
+        timeout: 300000
     });
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
