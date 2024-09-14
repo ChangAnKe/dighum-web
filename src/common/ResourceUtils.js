@@ -4,17 +4,34 @@ import { ElNotification } from 'element-plus'
 const dighumUrl = process.env.DIGHUM_URL;
 
 const downloadResource = (async (resource) => {
-    const response = await axios.get(dighumUrl + resource.resourceUrl, {
-        responseType: 'blob' // 设置响应类型为Blob
-    });
-    const url = window.URL.createObjectURL(new Blob([response.data]));
-    const link = document.createElement('a');
-    link.href = url;
     let fileName = resource.comKey.fileName;
     if (!resource.comKey.fileName.includes(".")) {
         fileName = fileName + '.' + resource.resourceUrl.split('.').pop();
     }
-    let file
+    let downloadProgress = 0;
+    let notification =  ElNotification({
+        title: fileName+'下载中:',
+        message: '进度'+downloadProgress+'%',
+        type: 'success',
+        duration: 0, // 不自动关闭
+    })
+    const response = await axios.get(dighumUrl + resource.resourceUrl, {
+        responseType: 'blob', // 设置响应类型为Blob
+        timeout: 300000,
+        onDownloadProgress: (progressEvent) => {
+            if (progressEvent.lengthComputable) {
+                const complete = (progressEvent.loaded / progressEvent.total) * 100;
+                downloadProgress = Math.round(complete);
+                if(downloadProgress==100) {
+                    notification.close();
+                }
+            }
+        }
+    });
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    
     link.setAttribute('download', fileName); // 设置文件名
     document.body.appendChild(link);
     link.click();

@@ -37,6 +37,11 @@
             <el-text type="danger">{{ Status[video.status] }}</el-text>
         </el-card>
     </div>
+    <div>
+    <p v-if="downloadProgress !== null">
+      下载进度: {{ downloadProgress }}%
+    </p>
+  </div>
 </template>
 
 <script setup>
@@ -48,7 +53,7 @@ import { Status } from '@/common/Status'
 import moment from 'moment-timezone'
 import { deleteResource, downloadResource } from '@/common/ResourceUtils'
 
-
+const downloadProgress = ref(null);
 const dighumUrl = process.env.DIGHUM_URL;
 
 let videos = reactive([])
