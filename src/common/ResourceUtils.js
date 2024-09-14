@@ -1,5 +1,6 @@
 import axios from '@/axios'
 import { ElNotification } from 'element-plus'
+import { ref } from 'vue'
 
 const dighumUrl = process.env.DIGHUM_URL;
 const downloadProgress = ref(0)
@@ -8,9 +9,9 @@ const downloadResource = (async (resource) => {
     if (!resource.comKey.fileName.includes(".")) {
         fileName = fileName + '.' + resource.resourceUrl.split('.').pop();
     }
-    let notification =  ElNotification({
-        title: fileName+'下载中:',
-        message: '进度'+downloadProgress+'%',
+    let notification = ElNotification({
+        title: fileName + '下载中:',
+        message: '进度' + downloadProgress + '%',
         type: 'success',
         duration: 0, // 不自动关闭
     })
@@ -21,7 +22,7 @@ const downloadResource = (async (resource) => {
             if (progressEvent.lengthComputable) {
                 const complete = (progressEvent.loaded / progressEvent.total) * 100;
                 downloadProgress.value = Math.round(complete);
-                if(downloadProgress.value==100) {
+                if (downloadProgress.value == 100) {
                     notification.close();
                 }
             }
@@ -30,7 +31,7 @@ const downloadResource = (async (resource) => {
     const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
     link.href = url;
-    
+
     link.setAttribute('download', fileName); // 设置文件名
     document.body.appendChild(link);
     link.click();
