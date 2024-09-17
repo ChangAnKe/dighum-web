@@ -37,17 +37,21 @@
                                 <el-card v-for="(audio, index) in audios" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === auIndex }">
                                     <template #header>
-                                        <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
-                                            <span style="font-size: 15px;">{{ audio.showFileName }}</span>
-                                            <div :class="{ 'div-checkmark active': index === auIndex }">
-                                                <span :class="{ 'checkmark active': index === auIndex }"
-                                                    v-if="index == auIndex">
-                                                    <el-icon>
-                                                        <Check />
-                                                    </el-icon>
-                                                </span>
+                                        <el-tooltip class="box-item" effect="dark"
+                                            :content="moment(audio.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
+                                            placement="top-start">
+                                            <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
+                                                <span style="font-size: 15px;">{{ audio.showFileName }}</span>
+                                                <div :class="{ 'div-checkmark active': index === auIndex }">
+                                                    <span :class="{ 'checkmark active': index === auIndex }"
+                                                        v-if="index == auIndex">
+                                                        <el-icon>
+                                                            <Check />
+                                                        </el-icon>
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </el-tooltip>
                                     </template>
                                     <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + audio.resourceUrl"
                                         :poster="dighumUrl + audioVoverUrl"
@@ -102,17 +106,21 @@
                                 <el-card v-for="(audio, index) in audios" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === auIndex }">
                                     <template #header>
-                                        <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
-                                            <span style="font-size: 15px;">{{ audio.showFileName }}</span>
-                                            <div :class="{ 'div-checkmark active': index === auIndex }">
-                                                <span :class="{ 'checkmark active': index === auIndex }"
-                                                    v-if="index == auIndex">
-                                                    <el-icon>
-                                                        <Check />
-                                                    </el-icon>
-                                                </span>
+                                        <el-tooltip class="box-item" effect="dark"
+                                            :content="moment(audio.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
+                                            placement="top-start">
+                                            <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
+                                                <span style="font-size: 15px;">{{ audio.showFileName }}</span>
+                                                <div :class="{ 'div-checkmark active': index === auIndex }">
+                                                    <span :class="{ 'checkmark active': index === auIndex }"
+                                                        v-if="index == auIndex">
+                                                        <el-icon>
+                                                            <Check />
+                                                        </el-icon>
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </el-tooltip>
                                     </template>
                                     <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + audio.resourceUrl"
                                         :poster="dighumUrl + audioVoverUrl"
@@ -128,23 +136,30 @@
                     <el-form-item>
                         <template #label>
                             <span class="gjxxLabel">分身选择</span>
-                            <el-button style="margin-left: 20px;" type="primary" @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos"><Refresh /></el-icon>
+                            <el-button style="margin-left: 20px;" type="primary"
+                                @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos">
+                                <Refresh />
+                            </el-icon>
                             <div class="card-container">
                                 <el-card v-for="(video, index) in videos" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === viIndex }">
                                     <template #header>
-                                        <div class="card-header" @click="toggleCheckmarkVi(index, video)">
-                                            <span style="font-size: 15px;">{{ video.showFileName
-                                                }}</span>
-                                            <div :class="{ 'div-checkmark active': index === viIndex }">
-                                                <span :class="{ 'checkmark active': index === viIndex }"
-                                                    v-if="index == viIndex">
-                                                    <el-icon>
-                                                        <Check />
-                                                    </el-icon>
-                                                </span>
+                                        <el-tooltip class="box-item" effect="dark"
+                                            :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
+                                            placement="top-start">
+                                            <div class="card-header" @click="toggleCheckmarkVi(index, video)">
+                                                <span style="font-size: 15px;">{{ video.showFileName
+                                                    }}</span>
+                                                <div :class="{ 'div-checkmark active': index === viIndex }">
+                                                    <span :class="{ 'checkmark active': index === viIndex }"
+                                                        v-if="index == viIndex">
+                                                        <el-icon>
+                                                            <Check />
+                                                        </el-icon>
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
+                                        </el-tooltip>
                                     </template>
                                     <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + video.resourceUrl"
                                         :poster="dighumUrl + video.coverUrl"
@@ -239,6 +254,7 @@ import { UploadFilled } from '@element-plus/icons-vue'
 import { ElMessage, ElNotification } from 'element-plus'
 import axios from '@/axios'
 import VideoPlayer from "@/components/videos/videoPlayer.vue"
+import moment from 'moment-timezone'
 
 const dighumUrl = process.env.DIGHUM_URL;
 const audioVoverUrl = process.env.AUDIO_COVER_URL;
@@ -699,6 +715,7 @@ const uploadAndCopyVideo = (async () => {
         color: #000;
     }
 }
+
 .el-icon {
     margin-left: 20px;
     cursor: pointer;
