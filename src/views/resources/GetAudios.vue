@@ -62,7 +62,7 @@ const resource = reactive({
         fileType: "AU",
         fileName: ""
     },
-    tag: 'ALL'
+    tag: 'AI'
 })
 
 const isLoading = ref(false);
