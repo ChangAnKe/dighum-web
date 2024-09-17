@@ -13,10 +13,12 @@
             <template #header>
 
                 <div class="card-header">
-                    <el-tooltip class="box-item" effect="dark" :content=" moment(audio.createDate).utc().tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss')+': '+audio.showFileName" placement="top-start">
-                        <span style="font-size: 15px;"><el-tag v-if="audio.tag" size="small" effect="dark"
+                    <el-tooltip class="box-item" effect="dark"
+                        :content="moment(audio.createDate).utc().tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
+                        placement="top-start">
+                        <span style="font-size: 15px;"><el-tag v-if="audio.tag == 'AI'" size="small" effect="dark"
                                 type="success" :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text
-                                v-if="audio.tag"> -
+                                v-if="audio.tag == 'AI'"> -
                             </e-text>{{ audio.showFileName
                             }}</span>
                     </el-tooltip>
