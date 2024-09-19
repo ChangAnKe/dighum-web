@@ -493,7 +493,7 @@ function submitFiles() {
             notify('Warning', '请选择分身！', 'warning', 5000);
             return;
         }
-        发送请求
+        //发送请求
         axios.post("/v1/resource/createTask/audio", reqJson, {
             headers: {
                 'Content-Type': 'application/json'
