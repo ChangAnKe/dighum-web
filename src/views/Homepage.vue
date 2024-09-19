@@ -83,7 +83,7 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter();
 const store = useUserStore();
-let userInfo = ref(store.userInfo);
+let userInfo = ref(store.getUserInfo);
 
 const logout = (() => {
   //清除用户信息

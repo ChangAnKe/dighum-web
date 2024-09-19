@@ -10,6 +10,7 @@ export const useUserStore = defineStore({
         // 设置用户信息
         setUserInfo(userInfo) {
             this.userInfo = userInfo;
+            localStorage.setItem('userInfo', JSON.stringify(userInfo));
         },
         // 清除 userInfo  
         clearUserInfo() {
@@ -22,6 +23,10 @@ export const useUserStore = defineStore({
     },
     getters: {
         // 获取用户信息
-        getUserInfo: (state) => state.userInfo,
+        //getUserInfo: (state) => state.userInfo,
+        getUserInfo() {
+            const storedUserInfo = localStorage.getItem('userInfo');
+            return storedUserInfo;
+        }
     }
 });
