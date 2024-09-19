@@ -200,7 +200,7 @@
             </el-form-item> -->
             <el-form-item>
                 <el-button type="success" @click="submitFiles" style="width: 900px; height: 50px; font-size: 20px;"
-                    :loading="isLoading">提交
+                    :loading="isLoading" :disabled="isButtonDisabled">提交
                 </el-button>
             </el-form-item>
         </el-form>
@@ -255,10 +255,13 @@ import { ElMessage, ElNotification } from 'element-plus'
 import axios from '@/axios'
 import VideoPlayer from "@/components/videos/videoPlayer.vue"
 import moment from 'moment-timezone'
+import { notify } from '@/common/Notification'
+import router from '@/router'
 
 const dighumUrl = process.env.DIGHUM_URL;
 const audioVoverUrl = process.env.AUDIO_COVER_URL;
 const isLoading = ref(false);
+const isButtonDisabled = ref(false)
 const cloneLoding = ref(false);
 const isTextDrive = ref(true)
 const fenshenShow = ref(true)
@@ -310,6 +313,7 @@ watch(form, (newValue, oldValue) => {
 }, { deep: true })
 
 watch(isTextDrive, (newValue, oldValue) => {
+    isButtonDisabled.value = false;
     if (newValue === false) { //仅音频
         audios.length = 0;
         loadMyAudios();
@@ -481,7 +485,15 @@ function submitFiles() {
             audio_url: dighumUrl + audioUrl,
             fileName: fileName
         }
-        // 发送请求
+        if (reqJson.audio_url == dighumUrl || isNull(reqJson.audio_url)) {
+            notify('Warning', '请选择音频！', 'warning', 5000);
+            return;
+        }
+        if (reqJson.video_url == dighumUrl || isNull(reqJson.video_url)) {
+            notify('Warning', '请选择分身！', 'warning', 5000);
+            return;
+        }
+        发送请求
         axios.post("/v1/resource/createTask/audio", reqJson, {
             headers: {
                 'Content-Type': 'application/json'
@@ -500,18 +512,20 @@ function normalResponse(response) {
     if (response.status == '200') {
         var code = response.data.code;
         if (code == '0' || code == '200') {
-            ElMessage.success('处理中，稍后可查询下载！')
+            notify('提交成功', '处理中，可到作品管理查询进度并下载！', 'success', 10000);
+            router.push('/myResources');
         } else {
-            ElMessage.error('失败: ' + response.data.remarks);
+            notify('失败', response.data.remarks, 'error', 10000);
         }
     } else {
-        ElMessage.error('内部异常，请联系管理员!');
+        notify('失败', '内部异常，请联系管理员!', 'error', 10000);
     }
 }
 
 function errorResponse(error) {
     isLoading.value = false;
-    ElMessage.error('异常：' + error);
+    isButtonDisabled.value = true;
+    notify('失败', '异常：' + error, 'error', 10000);
 }
 
 async function checkBeforeSubmit(file) {
