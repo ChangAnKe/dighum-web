@@ -25,7 +25,7 @@ export const useUserStore = defineStore({
         // 获取用户信息
         //getUserInfo: (state) => state.userInfo,
         getUserInfo() {
-            const storedUserInfo = localStorage.getItem('userInfo');
+            const storedUserInfo = JSON.parse(localStorage.getItem('userInfo'));
             return storedUserInfo;
         }
     }

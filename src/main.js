@@ -9,6 +9,7 @@ import { createPinia } from 'pinia';
 import 'element-plus/dist/index.css'
 
 import 'animate.css';
+import '@/styles/global.css'; 
 
 
 const app = createApp(App)
