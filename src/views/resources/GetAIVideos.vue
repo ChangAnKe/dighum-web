@@ -3,6 +3,11 @@
         <el-form-item label="文件名" class="fileName">
             <el-input v-model="resource.comKey.fileName" clearable />
         </el-form-item>
+        <el-form-item label="作品状态">
+            <el-select v-model="resource.status" placeholder="请选择" size="large" style="width: 240px">
+                <el-option v-for="(value, key) in Status" :key="key" :label="value" :value="key" />
+            </el-select>
+        </el-form-item>
         <el-form-item>
             <el-button type="primary" @click="getMyVideos" :loading="isLoading">查询</el-button>
         </el-form-item>
@@ -11,7 +16,9 @@
         <el-card v-for="(video, index) in videos" :key="index" style="width: 250px;height: 200px;">
             <template #header>
                 <div class="card-header">
-                    <el-tooltip class="box-item" effect="dark" :content=" moment(video.createDate).format('YYYY-MM-DD HH:mm:ss')+': '+video.showFileName" placement="top-start">
+                    <el-tooltip class="box-item" effect="dark"
+                        :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
+                        placement="top-start">
                         <div class="card-header">
                             <span style="font-size: 15px;">{{ video.showFileName
                                 }}</span>
@@ -37,11 +44,10 @@
             <el-text type="danger">{{ Status[video.status] }}</el-text>
         </el-card>
     </div>
-    <div>
-    <p v-if="downloadProgress !== null">
-      下载进度: {{ downloadProgress }}%
-    </p>
-  </div>
+    <el-pagination style="margin-top: 20px; margin-left: 60%;" v-if="videos.length > 0" background
+        layout="total, sizes, prev, pager, next, jumper" :total="total" :page-sizes="[10, 15, 20]"
+        @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="currentPage"
+        :page-size="pageSize" />
 </template>
 
 <script setup>
@@ -62,27 +68,46 @@ const resource = reactive({
         fileType: "VI",
         fileName: ""
     },
+    status: "",
     tag: "AI"
 })
-
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
 const isLoading = ref(false);
+
+const handleSizeChange = (newPageSize) => {
+    pageSize.value = newPageSize;
+    getMyVideos(); // 切换页码时，重新加载数据
+};
+
+
+const handlePageChange = (newPage) => {
+    currentPage.value = newPage;
+    getMyVideos(); // 切换页码时，重新加载数据
+};
 
 const getMyVideos = async () => {
     isLoading.value = true;
     // 发送请求
-    await axios.post("/v1/resource/getResources", resource, {
+    await axios.post("/v1/resource/paging/getResources", resource, {
         headers: {
             'Content-Type': 'application/json'
         },
-        timeout: 20000
+        timeout: 20000,
+        params: {
+            page: currentPage.value - 1, //后端从0开始前端从1开始
+            pageSize: pageSize.value
+        }
     }).then(response => {
         isLoading.value = false;
         if (response.status = '200') {
-            if (response.data.length == 0) {
+            if (response.data.totalElements == 0) {
                 ElMessage.success('无满足条件的视频，请上传！');
             } else {
+                total.value = response.data.totalElements;
                 //确保使用响应式的方式更新数组
-                videos.splice(0, videos.length, ...response.data);
+                videos.splice(0, videos.length, ...response.data.content);
             }
         } else {
             ElMessage.error('获取视频列表异常，请联系管理员！');

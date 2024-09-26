@@ -41,6 +41,10 @@
                 :id="audio.comKey.userId + '@_@' + audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
         </el-card>
     </div>
+    <el-pagination style="margin-top: 20px; margin-left: 60%;" v-if="audios.length > 0" background
+        layout="total, sizes, prev, pager, next, jumper" :total="total" :page-sizes="[10, 15, 20]"
+        @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="currentPage"
+        :page-size="pageSize" />
 </template>
 
 <script setup>
@@ -64,25 +68,45 @@ const resource = reactive({
     },
     tag: 'AI'
 })
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
 
 const isLoading = ref(false);
-const isSelected = ref(true)
+const isSelected = ref(true);
+
+const handleSizeChange = (newPageSize) => {
+    pageSize.value = newPageSize;
+    getMyAudios(); // 切换页码时，重新加载数据
+};
+
+
+const handlePageChange = (newPage) => {
+    currentPage.value = newPage;
+    getMyAudios(); // 切换页码时，重新加载数据
+};
 
 const getMyAudios = async () => {
     isLoading.value = true;
     // 发送请求
-    await axios.post("/v1/resource/getResources", resource, {
+    await axios.post("/v1/resource/paging/getResources", resource, {
         headers: {
             'Content-Type': 'application/json'
+        },
+        timeout: 20000,
+        params: {
+            page: currentPage.value - 1, //后端从0开始前端从1开始
+            pageSize: pageSize.value
         }
     }).then(response => {
         isLoading.value = false;
         if (response.status = '200') {
-            if (response.data.length == 0) {
+            if (response.data.totalElements == 0) {
                 ElMessage.success('无满足条件的音频，请上传！');
             } else {
+                total.value = response.data.totalElements;
                 //确保使用响应式的方式更新数组
-                audios.splice(0, audios.length, ...response.data);
+                audios.splice(0, audios.length, ...response.data.content);
             }
         } else {
             ElMessage.error('获取音频列表异常，请联系管理员！');
