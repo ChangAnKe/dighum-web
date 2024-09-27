@@ -33,9 +33,8 @@
                     <el-form-item>
                         <template #label>
                             <span class="xzsyLabel">选择声音</span>
-                            <el-pagination style="margin-top: 20px; margin-left: 28px;"
-                                v-if="audios.length > 0 && videos.length > 8" background
-                                layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
+                            <el-pagination style="margin-top: 20px; margin-left: 28px;" v-if="audios.length > 0"
+                                background layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
                                 :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeAudio"
                                 @current-change="handlePageChangeAudio" :current-page="currentPageAudio"
                                 :page-size="pageSizeAudio" />
@@ -108,9 +107,8 @@
                     <el-form-item>
                         <template #label>
                             <span class="xzsyLabel">选择声音</span>
-                            <el-pagination style="margin-top: 20px; margin-left: 28px;"
-                                v-if="audios.length > 0 && videos.length > 8" background
-                                layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
+                            <el-pagination style="margin-top: 20px; margin-left: 28px;" v-if="audios.length > 0"
+                                background layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
                                 :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeAudio"
                                 @current-change="handlePageChangeAudio" :current-page="currentPageAudio"
                                 :page-size="pageSizeAudio" />
@@ -152,9 +150,8 @@
                                 @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos">
                                 <Refresh />
                             </el-icon>
-                            <el-pagination style="margin-top: 20px; margin-left: 28px;"
-                                v-if="videos.length > 0 && videos.length > 8" background
-                                layout="total, sizes, prev, pager, next, jumper" :total="totalVideo"
+                            <el-pagination style="margin-top: 20px; margin-left: 28px;" v-if="videos.length > 0"
+                                background layout="total, sizes, prev, pager, next, jumper" :total="totalVideo"
                                 :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeVideo"
                                 @current-change="handlePageChangeVideo" :current-page="currentPageVideo"
                                 :page-size="pageSizeVideo" />
