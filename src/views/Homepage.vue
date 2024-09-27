@@ -10,7 +10,8 @@
             <template #dropdown>
               <el-dropdown-menu>
                 <el-dropdown-item>详情</el-dropdown-item>
-                <el-dropdown-item>积分: <el-text class="mx-1" type="primary">{{ userInfo.balance }}</el-text>
+                <el-dropdown-item @mouseenter="startUpdateBalance" @mouseleave="cancelUpdateBalance">积分:&nbsp;&nbsp; <el-text
+                    class="mx-1" type="primary" style="font-weight: bolder;">{{ userInfo.balance }}</el-text>
                 </el-dropdown-item>
                 <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
               </el-dropdown-menu>
@@ -113,6 +114,7 @@ import { ref } from 'vue'
 import { Menu as IconMenu, Message, Setting } from '@element-plus/icons-vue'
 import { useUserStore } from '@/stores/UseUserStore';
 import { useRouter } from 'vue-router'
+import axios from '@/axios'
 
 const router = useRouter();
 const store = useUserStore();
@@ -123,9 +125,28 @@ const logout = (() => {
   store.logout();
   router.push('/login')
 })
-
+let updateTimer = null;
 function secondsToMinutes(seconds: number) {
   return (seconds / 60).toFixed(1);
+}
+
+function startUpdateBalance() {
+  updateTimer = setTimeout(() => {
+    // 模拟从后端获取新的积分值
+    updateBalance();
+  }, 2000); // 延迟两秒执行
+}
+function cancelUpdateBalance() {
+  if (updateTimer) {
+    clearTimeout(updateTimer); // 取消定时器
+    updateTimer = null;
+  }
+}
+async function updateBalance() {
+  let response = await axios.get("/v1/auth/user/getUser");
+  if(response.status == 200) {
+    userInfo.value.balance = response.data.balance;
+  }
 }
 </script>
 
