@@ -33,6 +33,12 @@
                     <el-form-item>
                         <template #label>
                             <span class="xzsyLabel">选择声音</span>
+                            <el-pagination style="margin-top: 20px; margin-left: 28px;"
+                                v-if="audios.length > 0 && videos.length > 8" background
+                                layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
+                                :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeAudio"
+                                @current-change="handlePageChangeAudio" :current-page="currentPageAudio"
+                                :page-size="pageSizeAudio" />
                             <div class="card-container">
                                 <el-card v-for="(audio, index) in audios" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === auIndex }">
@@ -102,6 +108,12 @@
                     <el-form-item>
                         <template #label>
                             <span class="xzsyLabel">选择声音</span>
+                            <el-pagination style="margin-top: 20px; margin-left: 28px;"
+                                v-if="audios.length > 0 && videos.length > 8" background
+                                layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
+                                :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeAudio"
+                                @current-change="handlePageChangeAudio" :current-page="currentPageAudio"
+                                :page-size="pageSizeAudio" />
                             <div class="card-container">
                                 <el-card v-for="(audio, index) in audios" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === auIndex }">
@@ -140,6 +152,12 @@
                                 @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos">
                                 <Refresh />
                             </el-icon>
+                            <el-pagination style="margin-top: 20px; margin-left: 28px;"
+                                v-if="videos.length > 0 && videos.length > 8" background
+                                layout="total, sizes, prev, pager, next, jumper" :total="totalVideo"
+                                :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeVideo"
+                                @current-change="handlePageChangeVideo" :current-page="currentPageVideo"
+                                :page-size="pageSizeVideo" />
                             <div class="card-container">
                                 <el-card v-for="(video, index) in videos" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === viIndex }">
@@ -300,6 +318,12 @@ const resourceVideos = reactive({
         fileType: "VI",
     }
 })
+const currentPageAudio = ref(1)
+const pageSizeAudio = ref(1)
+const totalAudio = ref(0)
+const currentPageVideo = ref(1)
+const pageSizeVideo = ref(8)
+const totalVideo = ref(0)
 
 watch(form, (newValue, oldValue) => {
     if (newValue.output === '1') { //仅音频
@@ -320,20 +344,48 @@ watch(isTextDrive, (newValue, oldValue) => {
     }
 }, { deep: true })
 
+const handleSizeChangeAudio = (newPageSize) => {
+    pageSizeAudio.value = newPageSize;
+    loadMyAudios(); // 切换页码时，重新加载数据
+};
+
+
+const handlePageChangeAudio = (newPage) => {
+    currentPageAudio.value = newPage;
+    loadMyAudios(); // 切换页码时，重新加载数据
+};
+
+const handleSizeChangeVideo = (newPageSize) => {
+    pageSizeVideo.value = newPageSize;
+    loadMyVideos(); // 切换页码时，重新加载数据
+};
+
+
+const handlePageChangeVideo = (newPage) => {
+    currentPageVideo.value = newPage;
+    loadMyVideos(); // 切换页码时，重新加载数据
+};
+
 const loadMyAudios = async () => {
     if (!isTextDrive.value) {
         resourceAudios.tag = 'AI';
     }
     // 发送请求
-    await axios.post("/v1/resource/getResources", resourceAudios, {
+    await axios.post("/v1/resource/paging/getResources", resourceAudios, {
         headers: {
             'Content-Type': 'application/json'
+        },
+        timeout: 20000,
+        params: {
+            page: currentPageAudio.value - 1, //后端从0开始前端从1开始
+            pageSize: pageSizeAudio.value
         }
     }).then(response => {
         if (response.status = '200') {
-            if (response.data.length > 0) {
+            if (response.data.totalElements > 0) {
+                totalAudio.value = response.data.totalElements;
                 //确保使用响应式的方式更新数组
-                audios.splice(0, audios.length, ...response.data);
+                audios.splice(0, audios.length, ...response.data.content);
             }
         }
     }).catch(error => {
@@ -344,15 +396,21 @@ const loadMyAudios = async () => {
 
 const loadMyVideos = async () => {
     // 发送请求
-    await axios.post("/v1/resource/getResources", resourceVideos, {
+    await axios.post("/v1/resource/paging/getResources", resourceVideos, {
         headers: {
             'Content-Type': 'application/json'
+        },
+        timeout: 20000,
+        params: {
+            page: currentPageVideo.value - 1, //后端从0开始前端从1开始
+            pageSize: pageSizeVideo.value
         }
     }).then(response => {
         if (response.status = '200') {
-            if (response.data.length > 0) {
+            if (response.data.totalElements > 0) {
+                totalVideo.value = response.data.totalElements;
                 //确保使用响应式的方式更新数组
-                videos.splice(0, videos.length, ...response.data);
+                videos.splice(0, videos.length, ...response.data.content);
             }
         }
     }).catch(error => {

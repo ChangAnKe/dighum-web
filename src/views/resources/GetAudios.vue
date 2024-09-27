@@ -7,11 +7,14 @@
             <el-button type="primary" @click="getMyAudios" :loading="isLoading">查询</el-button>
         </el-form-item>
     </el-form>
+    <el-pagination style="margin-top: 20px; margin-left: 28px;" v-if="audios.length > 0" background
+        layout="total, sizes, prev, pager, next, jumper" :total="total" :page-sizes="[12, 16, 20]" :pager-count="5"
+        @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="currentPage"
+        :page-size="pageSize" />
     <div class="video-list">
         <el-card v-for="(audio, index) in audios" :key="index" body-style="height: 100px"
             :class="{ selected: isSelected }">
             <template #header>
-
                 <div class="card-header">
                     <el-tooltip class="box-item" effect="dark"
                         :content="moment(audio.createDate).utc().tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
@@ -41,10 +44,7 @@
                 :id="audio.comKey.userId + '@_@' + audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
         </el-card>
     </div>
-    <el-pagination style="margin-top: 20px; margin-left: 60%;" v-if="audios.length > 0" background
-        layout="total, sizes, prev, pager, next, jumper" :total="total" :page-sizes="[10, 15, 20]"
-        @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="currentPage"
-        :page-size="pageSize" />
+
 </template>
 
 <script setup>
@@ -69,7 +69,7 @@ const resource = reactive({
     tag: 'AI'
 })
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(12)
 const total = ref(0)
 
 const isLoading = ref(false);

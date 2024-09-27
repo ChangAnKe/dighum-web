@@ -12,6 +12,10 @@
             <el-button type="primary" @click="getMyVideos" :loading="isLoading">查询</el-button>
         </el-form-item>
     </el-form>
+    <el-pagination style="margin-top: 20px; margin-left: 28px;" v-if="videos.length > 0" background
+        layout="total, sizes, prev, pager, next, jumper" :total="total" :page-sizes="[12, 16, 20]" :pager-count="5"
+        @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="currentPage"
+        :page-size="pageSize" />
     <div class="video-list">
         <el-card v-for="(video, index) in videos" :key="index" style="width: 250px;height: 200px;">
             <template #header>
@@ -44,10 +48,7 @@
             <el-text type="danger">{{ Status[video.status] }}</el-text>
         </el-card>
     </div>
-    <el-pagination style="margin-top: 20px; margin-left: 60%;" v-if="videos.length > 0" background
-        layout="total, sizes, prev, pager, next, jumper" :total="total" :page-sizes="[10, 15, 20]"
-        @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="currentPage"
-        :page-size="pageSize" />
+
 </template>
 
 <script setup>
@@ -72,7 +73,7 @@ const resource = reactive({
     tag: "AI"
 })
 const currentPage = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(12)
 const total = ref(0)
 const isLoading = ref(false);
 
