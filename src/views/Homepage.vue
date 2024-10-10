@@ -62,7 +62,7 @@
                       p-id="32033" fill="#626ca8"></path>
                   </svg></el-icon><span>声音克隆</span></el-menu-item>
             </el-sub-menu>
-             <el-sub-menu index="2">
+             <el-sub-menu index="2" v-if="['15195912515', '130711077770'].includes(userInfo.phoneNumber)">
                 <template #title>
                   <el-icon>
                     <User />
