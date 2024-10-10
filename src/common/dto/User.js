@@ -4,9 +4,11 @@ class User {
         this.userName = '';  //  用户名
         this.email = '';  // 邮箱
         this.phoneNumber = '';
+        this.createdDate = '';
         this.createdDate = null;
         this.balance = 0;
         this.parentUserId = '';
+        this.remarks = '';
     }
 }
 
