@@ -33,7 +33,8 @@
                             <el-dropdown-menu>
                                 <el-dropdown-item command="download"
                                     @click="downloadResource(audio)">下载</el-dropdown-item>
-                                <el-dropdown-item command="delete" @click="deleteResource(audio)">删除</el-dropdown-item>
+                                <el-dropdown-item command="delete"
+                                    @click="deleteResource(audio, audios)">删除</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>

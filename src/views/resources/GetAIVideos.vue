@@ -36,7 +36,8 @@
                             <el-dropdown-menu>
                                 <el-dropdown-item command="download"
                                     @click="downloadResource(video)">下载</el-dropdown-item>
-                                <el-dropdown-item command="delete" @click="deleteResource(video)">删除</el-dropdown-item>
+                                <el-dropdown-item command="delete"
+                                    @click="deleteResource(video, videos)">删除</el-dropdown-item>
                             </el-dropdown-menu>
                         </template>
                     </el-dropdown>
