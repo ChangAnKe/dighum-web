@@ -3,6 +3,11 @@
         <el-form-item label="文件名" class="fileName">
             <el-input v-model="resource.comKey.fileName" clearable />
         </el-form-item>
+        <el-form-item label="类型">
+            <el-select v-model="resource.tag" placeholder="请选择" size="large" style="width: 240px">
+                <el-option v-for="(value, key) in Tag" :key="key" :label="value" :value="key" />
+            </el-select>
+        </el-form-item>
         <el-form-item>
             <el-button type="primary" @click="getMyAudios" :loading="isLoading">查询</el-button>
         </el-form-item>
@@ -19,9 +24,8 @@
                     <el-tooltip class="box-item" effect="dark"
                         :content="moment(audio.createDate).utc().tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
                         placement="top-start">
-                        <span style="font-size: 15px;"><el-tag v-if="audio.tag == 'AI'" size="small" effect="dark"
-                                type="success" :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text
-                                v-if="audio.tag == 'AI'"> -
+                        <span style="font-size: 15px;"><el-tag size="small" effect="dark" type="success"
+                                :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text> -
                             </e-text>{{ audio.showFileName
                             }}</span>
                     </el-tooltip>
@@ -56,6 +60,8 @@ import { ElMessage, ElNotification } from 'element-plus'
 import { VoiceCloneType } from '@/common/VoiceCloneType'
 import moment from 'moment-timezone';
 import { deleteResource, downloadResource } from '@/common/ResourceUtils'
+import { Tag } from '@/common/DropdownList'
+import { isEmpty } from '@/common/Objects'
 
 
 const dighumUrl = process.env.DIGHUM_URL;
@@ -67,7 +73,7 @@ const resource = reactive({
         fileType: "AU",
         fileName: ""
     },
-    tag: 'AI'
+    tag: null
 })
 const currentPage = ref(1)
 const pageSize = ref(12)
@@ -89,6 +95,8 @@ const handlePageChange = (newPage) => {
 
 const getMyAudios = async () => {
     isLoading.value = true;
+    resource.tag = isEmpty(resource.tag) ? 'AI' : resource.tag;
+    console.log('resource.tag');
     // 发送请求
     await axios.post("/v1/resource/paging/getResources", resource, {
         headers: {
