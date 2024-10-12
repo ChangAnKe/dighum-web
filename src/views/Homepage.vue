@@ -8,7 +8,7 @@
           </el-icon>
           <template #dropdown>
             <el-dropdown-menu>
-              <el-dropdown-item>详情</el-dropdown-item>
+              <el-dropdown-item @click="changePwd">修改密码</el-dropdown-item>
               <el-dropdown-item @mouseenter="startUpdateBalance" @mouseleave="cancelUpdateBalance">积分:&nbsp;&nbsp;
                 <el-text class="mx-1" type="primary" style="font-weight: bolder;">{{ userInfo.balance }}</el-text>
               </el-dropdown-item>
@@ -144,6 +144,9 @@ async function updateBalance() {
   if (response.status == 200) {
     userInfo.value.balance = response.data.balance;
   }
+}
+function changePwd() {
+  router.push('/changePwd');
 }
 </script>
 
