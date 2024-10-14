@@ -192,6 +192,7 @@ const register = (() => {
     max-width: 100%;
     padding: 20px;
     /* 增加卡片内边距 */
+    overflow: auto;
   }
 
   .el-form {
