@@ -33,8 +33,8 @@
                     <el-form-item>
                         <template #label>
                             <span class="xzsyLabel">选择声音</span>
-                            <el-pagination style="margin-top: 20px;" v-if="audios.length > 0"
-                                background layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
+                            <el-pagination style="margin-top: 20px;" v-if="audios.length > 0" background
+                                layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
                                 :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeAudio"
                                 @current-change="handlePageChangeAudio" :current-page="currentPageAudio"
                                 :page-size="pageSizeAudio" />
@@ -42,21 +42,34 @@
                                 <el-card v-for="(audio, index) in audios" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === auIndex }">
                                     <template #header>
-                                        <el-tooltip class="box-item" effect="dark"
-                                            :content="moment(audio.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
-                                            placement="top-start">
-                                            <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
+                                        <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
+                                            <el-tooltip class="box-item" effect="dark"
+                                                :content="moment(audio.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
+                                                placement="top-start">
                                                 <span style="font-size: 15px;">{{ audio.showFileName }}</span>
-                                                <div :class="{ 'div-checkmark active': index === auIndex }">
-                                                    <span :class="{ 'checkmark active': index === auIndex }"
-                                                        v-if="index == auIndex">
-                                                        <el-icon>
-                                                            <Check />
-                                                        </el-icon>
-                                                    </span>
-                                                </div>
+                                            </el-tooltip>
+                                            <div :class="{ 'div-checkmark active': index === auIndex }">
+                                                <span :class="{ 'checkmark active': index === auIndex }"
+                                                    v-if="index == auIndex">
+                                                    <el-icon>
+                                                        <Check />
+                                                    </el-icon>
+                                                </span>
                                             </div>
-                                        </el-tooltip>
+                                            <el-dropdown @command="handleCommand">
+                                                <span class="el-dropdown-link">
+                                                    <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                                                </span>
+                                                <template #dropdown>
+                                                    <el-dropdown-menu>
+                                                        <el-dropdown-item command="delete"
+                                                            @click="deleteResource(audio, audios)">删除</el-dropdown-item>
+                                                    </el-dropdown-menu>
+                                                </template>
+                                            </el-dropdown>
+                                        </div>
+
+
                                     </template>
                                     <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + audio.resourceUrl"
                                         :poster="dighumUrl + audioVoverUrl"
@@ -68,47 +81,17 @@
                         <el-text type="warning" v-if="audios.length == 0">无声音，需先进行声音克隆！</el-text>
                     </el-form-item>
                 </el-form-item>
-                <!-- <el-form-item>
-                    <el-form-item v-if="fenshenShow">
-                        <template #label>
-                            <span class="gjxxLabel">分身选择</span>
-                            <el-button style="margin-left: 20px;" type="primary" @click="openDrawer">点击复刻分身</el-button>
-                            <div class="card-container">
-                                <el-card v-for="(video, index) in videos" :key="index"
-                                    style="width: 250px;height: 200px;" :class="{ 'card-v active': index === viIndex }">
-                                    <template #header>
-                                        <div class="card-header" @click="toggleCheckmarkVi(index, video)">
-                                            <span style="font-size: 15px;">{{ video.showFileName
-                                                }}</span>
-                                            <div :class="{ 'div-checkmark active': index === viIndex }">
-                                                <span :class="{ 'checkmark active': index === viIndex }"
-                                                    v-if="index == viIndex">
-                                                    <el-icon>
-                                                        <Check />
-                                                    </el-icon>
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </template>
-                                    <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + video.resourceUrl"
-                                        :poster="dighumUrl + video.coverUrl"
-                                        :id="video.comKey.userId + '@_@' + video.comKey.fileType + '@_@' + video.comKey.fileName" />
-
-                                </el-card>
-                            </div>
-                        </template>
-                        <el-text type="warning" v-if="videos.length == 0">无分身，可以先复刻分身！</el-text>
-                    </el-form-item>
-                </el-form-item> -->
             </div>
+
             <!-- 音频驱动 -->
             <div v-if="!isTextDrive">
                 <el-form-item>
                     <el-form-item>
                         <template #label>
-                            <span class="xzsyLabel">选择声音</span>
-                            <el-pagination style="margin-top: 20px;" v-if="audios.length > 0"
-                                background layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
+                            <span class="xzsyLabel">选择声音模板</span>
+                            <!-- <el-button type="success" @click="chan">选择声音模板</el-button>&nbsp;&nbsp;&nbsp;或&nbsp;&nbsp;<el-button type="warning" @click="">本地音频<el-icon class="el-icon--right" style="margin-left: 0px;"><Upload /></el-icon></el-button> -->
+                            <el-pagination style="margin-top: 20px;" v-if="audios.length > 0" background
+                                layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
                                 :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeAudio"
                                 @current-change="handlePageChangeAudio" :current-page="currentPageAudio"
                                 :page-size="pageSizeAudio" />
@@ -116,21 +99,33 @@
                                 <el-card v-for="(audio, index) in audios" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === auIndex }">
                                     <template #header>
-                                        <el-tooltip class="box-item" effect="dark"
-                                            :content="moment(audio.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
-                                            placement="top-start">
-                                            <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
+                                        <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
+                                            <el-tooltip class="box-item" effect="dark"
+                                                :content="moment(audio.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
+                                                placement="top-start">
                                                 <span style="font-size: 15px;">{{ audio.showFileName }}</span>
-                                                <div :class="{ 'div-checkmark active': index === auIndex }">
-                                                    <span :class="{ 'checkmark active': index === auIndex }"
-                                                        v-if="index == auIndex">
-                                                        <el-icon>
-                                                            <Check />
-                                                        </el-icon>
-                                                    </span>
-                                                </div>
+                                            </el-tooltip>
+                                            <div :class="{ 'div-checkmark active': index === auIndex }">
+                                                <span :class="{ 'checkmark active': index === auIndex }"
+                                                    v-if="index == auIndex">
+                                                    <el-icon>
+                                                        <Check />
+                                                    </el-icon>
+                                                </span>
                                             </div>
-                                        </el-tooltip>
+
+                                            <el-dropdown @command="handleCommand">
+                                                <span class="el-dropdown-link">
+                                                    <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                                                </span>
+                                                <template #dropdown>
+                                                    <el-dropdown-menu>
+                                                        <el-dropdown-item command="delete"
+                                                            @click="deleteResource(audio, audios)">删除</el-dropdown-item>
+                                                    </el-dropdown-menu>
+                                                </template>
+                                            </el-dropdown>
+                                        </div>
                                     </template>
                                     <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + audio.resourceUrl"
                                         :poster="dighumUrl + audioVoverUrl"
@@ -150,8 +145,8 @@
                                 @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos">
                                 <Refresh />
                             </el-icon>
-                            <el-pagination style="margin-top: 20px;" v-if="videos.length > 0"
-                                background layout="total, sizes, prev, pager, next, jumper" :total="totalVideo"
+                            <el-pagination style="margin-top: 20px;" v-if="videos.length > 0" background
+                                layout="total, sizes, prev, pager, next, jumper" :total="totalVideo"
                                 :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeVideo"
                                 @current-change="handlePageChangeVideo" :current-page="currentPageVideo"
                                 :page-size="pageSizeVideo" />
@@ -159,22 +154,33 @@
                                 <el-card v-for="(video, index) in videos" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === viIndex }">
                                     <template #header>
-                                        <el-tooltip class="box-item" effect="dark"
-                                            :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
-                                            placement="top-start">
-                                            <div class="card-header" @click="toggleCheckmarkVi(index, video)">
+
+                                        <div class="card-header" @click="toggleCheckmarkVi(index, video)">
+                                            <el-tooltip class="box-item" effect="dark"
+                                                :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
+                                                placement="top-start">
                                                 <span style="font-size: 15px;">{{ video.showFileName
-                                                    }}</span>
-                                                <div :class="{ 'div-checkmark active': index === viIndex }">
-                                                    <span :class="{ 'checkmark active': index === viIndex }"
-                                                        v-if="index == viIndex">
-                                                        <el-icon>
-                                                            <Check />
-                                                        </el-icon>
-                                                    </span>
-                                                </div>
+                                                    }}</span></el-tooltip>
+                                            <div :class="{ 'div-checkmark active': index === viIndex }">
+                                                <span :class="{ 'checkmark active': index === viIndex }"
+                                                    v-if="index == viIndex">
+                                                    <el-icon>
+                                                        <Check />
+                                                    </el-icon>
+                                                </span>
                                             </div>
-                                        </el-tooltip>
+                                            <el-dropdown @command="handleCommand">
+                                                <span class="el-dropdown-link">
+                                                    <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                                                </span>
+                                                <template #dropdown>
+                                                    <el-dropdown-menu>
+                                                        <el-dropdown-item command="delete"
+                                                            @click="deleteResource(video, videos)">删除</el-dropdown-item>
+                                                    </el-dropdown-menu>
+                                                </template>
+                                            </el-dropdown>
+                                        </div>
                                     </template>
                                     <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + video.resourceUrl"
                                         :poster="dighumUrl + video.coverUrl"
@@ -272,6 +278,7 @@ import VideoPlayer from "@/components/videos/videoPlayer.vue"
 import moment from 'moment-timezone'
 import { notify } from '@/common/Notification'
 import router from '@/router'
+import { deleteResource } from '@/common/ResourceUtils'
 
 const dighumUrl = process.env.DIGHUM_URL;
 const audioVoverUrl = process.env.AUDIO_COVER_URL;
@@ -281,7 +288,6 @@ const cloneLoding = ref(false);
 const isTextDrive = ref(true)
 const fenshenShow = ref(true)
 const formRef = ref(null)
-const outputType = ref('0')
 const uploadDrawer = ref(false)
 let form = reactive({
     output: '1',
@@ -338,6 +344,8 @@ watch(isTextDrive, (newValue, oldValue) => {
     if (newValue === false) { //仅音频
         audios.length = 0;
         loadMyAudios();
+    } else {
+        loadMyAudios();
     }
 }, { deep: true })
 
@@ -366,6 +374,8 @@ const handlePageChangeVideo = (newPage) => {
 const loadMyAudios = async () => {
     if (!isTextDrive.value) {
         resourceAudios.tag = 'AI';
+    } else {
+        resourceAudios.tag = 'AI-Model';
     }
     // 发送请求
     await axios.post("/v1/resource/paging/getResources", resourceAudios, {
@@ -705,34 +715,37 @@ const uploadAndCopyVideo = (async () => {
         overflow: hidden;
     }
 
-    .card-v:nth-child(-n + 3) {
-        margin-right: 16px;
-    }
-
     .card-v .div-checkmark {
-        width: 30px;
-        height: 30px;
+        width: 50px;
+        height: 50px;
         position: absolute;
         background: #67e5ff;
-        top: -15px;
-        right: -15px;
+        top: -25px;
+        right: -25px;
         transform: rotate(45deg);
     }
 
     .card-v .div-checkmark .checkmark {
         position: absolute;
-        bottom: 0;
+        margin-top: 50px;
+        margin-left: 20px;
+        transform: translate(-50%, -50%) rotate(-45deg);
+        /* 中心旋转 */
         display: block;
-        width: 24px;
-        height: 24px;
-        text-align: center;
-        transform: rotate(-45deg);
-        color: #0d472a;
+        color: #050706;
     }
 }
 
 .card-header {
     cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 10px;
+}
+
+.el-tooltip {
+    width: 150%;
 }
 
 .checkmark {
