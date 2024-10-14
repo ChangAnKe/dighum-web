@@ -1,9 +1,8 @@
 <template>
   <div class="login-container">
     <transition name="fade">
-      <el-card style="max-width: 600px;">
-        <el-form ref="loginForm" :model="form" :rules="rules" autocomplete="on"
-          style="max-width: 600px; max-height: 500px;">
+      <el-card class="elCard">
+        <el-form ref="loginForm" :model="form" :rules="rules" autocomplete="on" class="loginForm">
           <img src="@/assets/images/svg/bld.svg" alt="Login Icon" style="margin-left: 30%;" />
           <el-text style="font-size: 13px; margin-left: 25px;">没有账户？</el-text><el-link type="primary" :underline="false"
             style="font-size: 13px;" @click="register()">立即注册</el-link>
@@ -151,16 +150,15 @@ const register = (() => {
   align-items: center;
 }
 
-.title {
-  text-align: center;
-  font-size: 100px;
-  margin-bottom: 15px;
+.elCard {
+  max-width: 600px;
 }
 
 .el-form {
   width: 500px;
   height: 500px;
 }
+
 
 .el-link {
   margin-right: 8px;
@@ -188,23 +186,18 @@ const register = (() => {
 
 /* 移动设备样式 */
 @media (max-width: 728px) {
-  .el-card {
+  .elCard {
     max-width: 100%;
+    max-height: 100%;
     padding: 20px;
     /* 增加卡片内边距 */
     overflow: auto;
   }
 
   .el-form {
-    width: 100%;
-    /* 表单宽度为100% */
+    width: 400px;
+    height: 400px;
   }
-
-  .title {
-    font-size: 24px;
-    /* 缩小标题字体 */
-  }
-
   .success {
     width: 100%;
     /* 按钮宽度为100% */
