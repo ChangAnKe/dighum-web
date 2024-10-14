@@ -4,8 +4,8 @@
       <el-card class="elCard">
         <el-form ref="loginForm" :model="form" :rules="rules" autocomplete="on" class="loginForm">
           <img src="@/assets/images/svg/bld.svg" alt="Login Icon" style="margin-left: 30%;" />
-          <el-text style="font-size: 13px; margin-left: 25px;">没有账户？</el-text><el-link type="primary" :underline="false"
-            style="font-size: 13px;" @click="register()">立即注册</el-link>
+          <el-text class="myzh">没有账户？</el-text><el-link type="primary" :underline="false" class="ljzc"
+            @click="register()">立即注册</el-link>
           <el-form-item prop="userId">
             <el-input v-model="form.userId" prefix-icon="User" placeholder="手机号或邮箱" size="large"
               style="padding-top: 20px;" class="custom-input-height"></el-input>
@@ -159,12 +159,14 @@ const register = (() => {
   height: 500px;
 }
 
-.el-link {
-  margin-right: 8px;
+.el-text {
+  font-size: 13px;
+  margin-left: 25px;
 }
 
-.el-link .el-icon--right.el-icon {
-  vertical-align: text-bottom;
+.el-link {
+  margin-right: 8px;
+  font-size: 13px;
 }
 
 .success {
@@ -206,14 +208,27 @@ const register = (() => {
   }
 
   .el-form {
-    width: 400px;
-    height: 400px;
+    width: 100%;
+    height: 100%;
   }
 
   .success {
     width: 100%;
     /* 按钮宽度为100% */
   }
+
+  .el-text {
+    font-size: 8px;
+  }
+
+  .el-text {
+    font-size: 10px;
+  }
+
+  .el-link {
+    font-size: 10px;
+  }
+
 
 }
 </style>
