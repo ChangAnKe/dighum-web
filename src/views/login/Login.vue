@@ -187,7 +187,7 @@ const register = (() => {
 }
 
 /* 移动设备样式 */
-@media (max-width: 500px) {
+@media (max-width: 728px) {
   .el-card {
     max-width: 100%;
     padding: 20px;
