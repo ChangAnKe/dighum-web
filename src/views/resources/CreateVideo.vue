@@ -134,7 +134,7 @@
                                 </el-card>
                             </div>
                         </template>
-                        <el-text type="warning" v-if="audios.length == 0">无声音，需先进行声音克隆！</el-text>
+                        <el-text type="warning" v-if="audios.length == 0">无声音，需先生成AI音频！</el-text>
                     </el-form-item>
                 </el-form-item>
                 <el-form-item>
