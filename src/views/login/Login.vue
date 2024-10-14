@@ -159,7 +159,6 @@ const register = (() => {
   height: 500px;
 }
 
-
 .el-link {
   margin-right: 8px;
 }
@@ -185,7 +184,19 @@ const register = (() => {
 }
 
 /* 移动设备样式 */
-@media (max-width: 728px) {
+@media (max-width: 768px) {
+  .login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    /* 确保容器填满页面高度 */
+    padding: 10px;
+    /* 防止卡片与边界太贴近 */
+    overflow-y: auto;
+    /* 允许页面垂直滚动 */
+  }
+
   .elCard {
     max-width: 100%;
     max-height: 100%;
@@ -198,6 +209,7 @@ const register = (() => {
     width: 400px;
     height: 400px;
   }
+
   .success {
     width: 100%;
     /* 按钮宽度为100% */
