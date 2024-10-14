@@ -19,8 +19,8 @@
                   style="color: #2a598a; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">忘记密码</el-button>
               </template> </el-input>
           </el-form-item>
-          <el-button type="success" @click="loginRequest" size="large" @keydown.enter="handleKeydown()"
-            :loading="isLoading" style="width: 500px; height: 50px; font-size: 20px; margin-top: 30px;">登录</el-button>
+          <el-button class="success" type="success" @click="loginRequest" size="large" @keydown.enter="handleKeydown()"
+            :loading="isLoading">登录</el-button>
         </el-form>
       </el-card>
     </transition>
@@ -134,9 +134,7 @@ const register = (() => {
 <style scoped>
 .custom-input-height .el-input__inner {
   height: 40px;
-  /* 你想要的高度 */
   line-height: 40px;
-  /* 行高与高度一致，使输入内容垂直居中 */
 }
 
 .login-container {
@@ -172,18 +170,44 @@ const register = (() => {
   vertical-align: text-bottom;
 }
 
+.success {
+  width: 500px;
+  height: 50px;
+  font-size: 20px;
+  margin-top: 30px;
+}
+
 .footer {
   position: absolute;
-  /* 使用绝对定位 */
   bottom: 0;
-  /* 距离底部边缘为0 */
   left: 50%;
-  /* 水平居中 */
   transform: translateX(-50%);
-  /* 对于非块级元素的居中 */
   text-align: center;
-  /* 文本水平居中 */
   padding: 10px;
-  /* 添加一些内边距以避免粘连到底部边缘 */
+}
+
+/* 移动设备样式 */
+@media (max-width: 500px) {
+  .el-card {
+    max-width: 100%;
+    padding: 20px;
+    /* 增加卡片内边距 */
+  }
+
+  .el-form {
+    width: 100%;
+    /* 表单宽度为100% */
+  }
+
+  .title {
+    font-size: 24px;
+    /* 缩小标题字体 */
+  }
+
+  .success {
+    width: 100%;
+    /* 按钮宽度为100% */
+  }
+
 }
 </style>
