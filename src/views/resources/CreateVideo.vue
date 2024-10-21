@@ -18,17 +18,6 @@
                         <el-radio value="1">仅音频</el-radio>
                     </el-radio-group>
                 </el-form-item>
-                <!-- <el-form-item>
-                    <el-upload class="upload-demo" drag multiple :auto-upload="false" :file-list="videoList" limit=1
-                        style="margin-top: 10px;" :on-change="handleVideoChange">
-                        <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                        <div class="el-upload__text"><el-text class="mx-1" type="success"
-                                size="large">将视频文件拖到此处，或<em>点击上传</em></el-text></div>
-                        <template #tip>
-
-                        </template>
-                    </el-upload>
-                </el-form-item> -->
                 <el-form-item>
                     <el-form-item>
                         <template #label>
@@ -56,7 +45,7 @@
                                                     </el-icon>
                                                 </span>
                                             </div>
-                                            <el-dropdown @command="handleCommand">
+                                            <el-dropdown>
                                                 <span class="el-dropdown-link">
                                                     <el-icon class="el-icon--right"><arrow-down /></el-icon>
                                                 </span>
@@ -88,50 +77,68 @@
                 <el-form-item>
                     <el-form-item>
                         <template #label>
-                            <span class="xzsyLabel">选择声音模板</span>
-                            <!-- <el-button type="success" @click="chan">选择声音模板</el-button>&nbsp;&nbsp;&nbsp;或&nbsp;&nbsp;<el-button type="warning" @click="">本地音频<el-icon class="el-icon--right" style="margin-left: 0px;"><Upload /></el-icon></el-button> -->
-                            <el-pagination style="margin-top: 20px;" v-if="audios.length > 0" background
-                                layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
-                                :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeAudio"
-                                @current-change="handlePageChangeAudio" :current-page="currentPageAudio"
-                                :page-size="pageSizeAudio" />
-                            <div class="card-container">
-                                <el-card v-for="(audio, index) in audios" :key="index"
-                                    style="width: 250px;height: 200px;" :class="{ 'card-v active': index === auIndex }">
-                                    <template #header>
-                                        <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
-                                            <el-tooltip class="box-item" effect="dark"
-                                                :content="moment(audio.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
-                                                placement="top-start">
-                                                <span style="font-size: 15px;">{{ audio.showFileName }}</span>
-                                            </el-tooltip>
-                                            <div :class="{ 'div-checkmark active': index === auIndex }">
-                                                <span :class="{ 'checkmark active': index === auIndex }"
-                                                    v-if="index == auIndex">
-                                                    <el-icon>
-                                                        <Check />
-                                                    </el-icon>
-                                                </span>
+                            <!-- <span class="xzsyLabel">选择声音模板</span> -->
+                            <div style="margin-top: 20px">
+                                <el-radio-group v-model="audioWay" @change="audioWayChange">
+                                    <el-radio-button label="选择声音模板" type value="1" />
+                                    <el-radio-button label="本地音频" value="2" />
+                                </el-radio-group>
+                            </div>
+                            <div v-if="!localAudio">
+                                <el-pagination style="margin-top: 20px;" v-if="audios.length > 0" background
+                                    layout="total, sizes, prev, pager, next, jumper" :total="totalAudio"
+                                    :page-sizes="[8, 12, 16]" :pager-count="5" @size-change="handleSizeChangeAudio"
+                                    @current-change="handlePageChangeAudio" :current-page="currentPageAudio"
+                                    :page-size="pageSizeAudio" />
+                                <div class="card-container">
+                                    <el-card v-for="(audio, index) in audios" :key="index"
+                                        style="width: 250px;height: 200px;"
+                                        :class="{ 'card-v active': index === auIndex }">
+                                        <template #header>
+                                            <div class="card-header" @click="toggleCheckmarkAu(index, audio)">
+                                                <el-tooltip class="box-item" effect="dark"
+                                                    :content="moment(audio.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
+                                                    placement="top-start">
+                                                    <span style="font-size: 15px;">{{ audio.showFileName }}</span>
+                                                </el-tooltip>
+                                                <div :class="{ 'div-checkmark active': index === auIndex }">
+                                                    <span :class="{ 'checkmark active': index === auIndex }"
+                                                        v-if="index == auIndex">
+                                                        <el-icon>
+                                                            <Check />
+                                                        </el-icon>
+                                                    </span>
+                                                </div>
+
+                                                <el-dropdown>
+                                                    <span class="el-dropdown-link">
+                                                        <el-icon class="el-icon--right"><arrow-down /></el-icon>
+                                                    </span>
+                                                    <template #dropdown>
+                                                        <el-dropdown-menu>
+                                                            <el-dropdown-item command="delete"
+                                                                @click="deleteResource(audio, audios)">删除</el-dropdown-item>
+                                                        </el-dropdown-menu>
+                                                    </template>
+                                                </el-dropdown>
                                             </div>
+                                        </template>
+                                        <VideoPlayer width="210px" height="120px"
+                                            :video-url="dighumUrl + audio.resourceUrl"
+                                            :poster="dighumUrl + audioVoverUrl"
+                                            :id="audio.comKey.userId + '@_@' + audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
 
-                                            <el-dropdown @command="handleCommand">
-                                                <span class="el-dropdown-link">
-                                                    <el-icon class="el-icon--right"><arrow-down /></el-icon>
-                                                </span>
-                                                <template #dropdown>
-                                                    <el-dropdown-menu>
-                                                        <el-dropdown-item command="delete"
-                                                            @click="deleteResource(audio, audios)">删除</el-dropdown-item>
-                                                    </el-dropdown-menu>
-                                                </template>
-                                            </el-dropdown>
-                                        </div>
-                                    </template>
-                                    <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + audio.resourceUrl"
-                                        :poster="dighumUrl + audioVoverUrl"
-                                        :id="audio.comKey.userId + '@_@' + audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
-
-                                </el-card>
+                                    </el-card>
+                                </div>
+                            </div>
+                            <div v-else>
+                                <el-upload class="upload-demo" drag multiple :auto-upload="false" :file-list="audioList"
+                                    limit=1 style="margin-top: 20px; width: 800px;" :on-change="handleAudioChange"
+                                    :accept="`.mp3,.m4a,.wav`" :on-remove="removeAudio">
+                                    <img src="@/assets/images/svg/file_upload.svg" alt="Logo" style="width: 50px;" />
+                                    <div class="el-upload__text"><el-text class="mx-1" type="success"
+                                            size="large">将音频文件拖到此处，或<em>点击上传</em></el-text></div>
+                                </el-upload>
                             </div>
                         </template>
                         <el-text type="warning" v-if="audios.length == 0">无声音，需先生成AI音频！</el-text>
@@ -169,7 +176,7 @@
                                                     </el-icon>
                                                 </span>
                                             </div>
-                                            <el-dropdown @command="handleCommand">
+                                            <el-dropdown>
                                                 <span class="el-dropdown-link">
                                                     <el-icon class="el-icon--right"><arrow-down /></el-icon>
                                                 </span>
@@ -193,32 +200,6 @@
                     </el-form-item>
                 </el-form-item>
             </div>
-            <!-- <el-form-item v-if="!isTextDrive">
-                <el-upload ref="audioUpload" class="upload-demo" drag multiple :auto-upload="false"
-                    :file-list="audioList" limit=1 style="margin-top: 50px;" :before-upload="beforeAudioUpload"
-                    :on-change="handleAudioChange" :accept="`.mp3,.m4a,.wav`">
-                    <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                    <div class="el-upload__text"><el-text class="mx-1" type="warning"
-                            size="large">将音频文件拖到此处，或<em>点击上传</em></el-text></div>
-                    <template #tip>
-                        <div class="el-upload__tip">
-                            <el-text class="mx-1" type="warning" style="font-size: 20px;"> 格式支持： .mp3 .m4a
-                                .wav</el-text>
-                        </div>
-                    </template>
-                </el-upload>
-            </el-form-item>
-            <el-form-item>
-                <el-upload class="upload-demo" drag multiple :auto-upload="false" :file-list="videoList" limit=1
-                    style="margin-top: 40px;" :on-change="handleVideoChange">
-                    <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-                    <div class="el-upload__text"><el-text class="mx-1" type="success"
-                            size="large">将视频文件拖到此处，或<em>点击上传</em></el-text></div>
-                    <template #tip>
-                        
-                    </template>
-                </el-upload>
-            </el-form-item> -->
             <el-form-item>
                 <el-button type="success" @click="submitFiles" style="width: 900px; height: 50px; font-size: 20px;"
                     :loading="isLoading" :disabled="isButtonDisabled">提交
@@ -293,8 +274,6 @@ let form = reactive({
     output: '1',
     textarea: ''
 })
-let audioList = []
-let videoList = []
 const top = 'top'
 let audios = reactive([])
 let videos = reactive([])
@@ -327,6 +306,11 @@ const totalAudio = ref(0)
 const currentPageVideo = ref(1)
 const pageSizeVideo = ref(8)
 const totalVideo = ref(0)
+const audioWay = ref('1')
+const localAudio = ref(false)
+let audioList = []
+let videoFileName;
+
 
 watch(form, (newValue, oldValue) => {
     if (newValue.output === '1') { //仅音频
@@ -466,7 +450,8 @@ function toggleCheckmarkVi(index, video) {
     viIndex.value = index
     resUrl = video.resourceUrl
     if ("0" === form.output || !isTextDrive.value) {
-        fileName = video.comKey.fileName
+        fileName = video.comKey.fileName;
+        videoFileName = video.comKey.fileName;
     }
 }
 
@@ -501,7 +486,6 @@ function isNull(obj) {
 
 // 提交文件
 function submitFiles() {
-    isLoading.value = true;
     var outputType = form.output;
     //文本驱动
     if (isTextDrive.value) {
@@ -524,6 +508,7 @@ function submitFiles() {
         if (!validBeforeCreateAIData(reqJson)) {
             return;
         }
+        isLoading.value = true;
         // 发送请求
         axios.post("/v1/resource/createTask/text", reqJson, {
             headers: {
@@ -545,29 +530,59 @@ function submitFiles() {
 
     //音频驱动
     if (!isTextDrive.value) {
-        let reqJson = {
-            video_url: dighumUrl + resUrl,
-            audio_url: dighumUrl + audioUrl,
-            fileName: fileName
-        }
-        if (reqJson.audio_url == dighumUrl || isNull(reqJson.audio_url)) {
-            notify('Warning', '请选择音频！', 'warning', 5000);
-            return;
-        }
-        if (reqJson.video_url == dighumUrl || isNull(reqJson.video_url)) {
-            notify('Warning', '请选择分身！', 'warning', 5000);
-            return;
-        }
-        //发送请求
-        axios.post("/v1/resource/createTask/audio", reqJson, {
-            headers: {
-                'Content-Type': 'application/json'
+        //选择声音模板
+        if (audioWay.value == "1") {
+            let reqJson = {
+                video_url: dighumUrl + resUrl,
+                audio_url: dighumUrl + audioUrl,
+                fileName: videoFileName
             }
-        }).then(response => {
-            normalResponse(response);
-        }).catch(error => {
-            errorResponse(error);
-        });
+            if (reqJson.audio_url == dighumUrl || isNull(reqJson.audio_url)) {
+                notify('Warning', '请选择音频！', 'warning', 5000);
+                return;
+            }
+            if (reqJson.video_url == dighumUrl || isNull(reqJson.video_url)) {
+                notify('Warning', '请选择分身！', 'warning', 5000);
+                return;
+            }
+            isLoading.value = true;
+            //发送请求
+            axios.post("/v1/resource/createTask/audio", reqJson, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                normalResponse(response);
+            }).catch(error => {
+                errorResponse(error);
+            });
+        }
+        //本地音频上传
+        if (audioWay.value == "2") {
+            var videoUrl = dighumUrl + resUrl;
+            if (audioList.length == 0) {
+                notify('Warning', '请选择本地音频！', 'warning', 5000);
+                return;
+            }
+            if (isNull(videoUrl) || videoUrl == dighumUrl) {
+                notify('Warning', '请选择分身！', 'warning', 5000);
+                return;
+            }
+            const formData = new FormData();
+            formData.append('fileName', videoFileName)
+            formData.append('videoUrl', videoUrl)
+            formData.append('localAudioFile', audioList[0].raw);
+            axios.put("/v1/resource/createTask/localAudio", formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                },
+                timeout: 300000
+            }).then(response => {
+                normalResponse(response);
+            }).catch(error => {
+                errorResponse(error);
+            });
+        }
     }
 
 }
@@ -663,7 +678,17 @@ const uploadAndCopyVideo = (async () => {
     })
 })
 
+function audioWayChange() {
+    localAudio.value = (audioWay.value == "2" ? true : false);
+}
 
+function handleAudioChange(file, fileList) {
+    audioList = fileList;
+}
+
+function removeAudio(){
+    audioList = [];
+}
 
 </script>
 
