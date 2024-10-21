@@ -80,8 +80,8 @@
                             <!-- <span class="xzsyLabel">选择声音模板</span> -->
                             <div style="margin-top: 20px">
                                 <el-radio-group v-model="audioWay" @change="audioWayChange">
-                                    <el-radio-button label="选择声音模板" type value="1" />
-                                    <el-radio-button label="本地音频" value="2" v-show="['15195912515', '13071107770'].includes(userInfo.phoneNumber)"/>
+                                    <el-radio-button label="选择声音" type value="1" />
+                                    <el-radio-button label="本地音频测试" value="2" v-show="['15195912515', '13071107770'].includes(userInfo.phoneNumber)"/>
                                 </el-radio-group>
                             </div>
                             <div v-if="!localAudio">
