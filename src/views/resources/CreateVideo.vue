@@ -260,6 +260,7 @@ import moment from 'moment-timezone'
 import { notify } from '@/common/Notification'
 import router from '@/router'
 import { deleteResource } from '@/common/ResourceUtils'
+import { useUserStore } from '@/stores/UseUserStore';
 
 const store = useUserStore();
 let userInfo = ref(store.getUserInfo);
