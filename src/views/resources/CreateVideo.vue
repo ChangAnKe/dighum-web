@@ -141,7 +141,7 @@
                                 </el-upload>
                             </div>
                         </template>
-                        <el-text type="warning" v-if="audios.length == 0">无声音，需先生成AI音频！</el-text>
+                        <el-text type="warning" v-if="audios.length == 0 && !localAudio">无声音，需先生成AI音频！</el-text>
                     </el-form-item>
                 </el-form-item>
                 <el-form-item>
@@ -686,7 +686,7 @@ function handleAudioChange(file, fileList) {
     audioList = fileList;
 }
 
-function removeAudio(){
+function removeAudio() {
     audioList = [];
 }
 
