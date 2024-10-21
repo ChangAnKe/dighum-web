@@ -81,7 +81,7 @@
                             <div style="margin-top: 20px">
                                 <el-radio-group v-model="audioWay" @change="audioWayChange">
                                     <el-radio-button label="选择声音模板" type value="1" />
-                                    <el-radio-button label="本地音频" value="2" />
+                                    <el-radio-button label="本地音频" value="2" v-show="['15195912515', '13071107770'].includes(userInfo.phoneNumber)"/>
                                 </el-radio-group>
                             </div>
                             <div v-if="!localAudio">
@@ -261,6 +261,8 @@ import { notify } from '@/common/Notification'
 import router from '@/router'
 import { deleteResource } from '@/common/ResourceUtils'
 
+const store = useUserStore();
+let userInfo = ref(store.getUserInfo);
 const dighumUrl = process.env.DIGHUM_URL;
 const audioVoverUrl = process.env.AUDIO_COVER_URL;
 const isLoading = ref(false);
