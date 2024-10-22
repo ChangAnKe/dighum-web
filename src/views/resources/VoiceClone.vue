@@ -55,10 +55,14 @@
                     <el-text class="mx-1" type="danger" style="margin-left: 10px;">音频文件大小不超过20M</el-text>
                 </div>
                 <el-upload class="upload-demo" drag multiple :auto-upload="false" :file-list="audioList" limit=1
-                    style="margin-top: 40px;width: 100%;" :on-change="handleAudioChange" :accept="`.mp3,.m4a,.wav`">
-                    <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+                    style="margin-top: 40px;width: 100%;" :on-change="handleAudioChange" :accept="`.mp3,.m4a,.wav`"
+                    :on-progress="handleProgress" :on-success="handleSuccess" :on-remove="handleRemove">
+                    <el-progress v-if="progressVisible" :percentage="uploadProgress" :color="ProgressColors"
+                        type="dashboard"></el-progress>
+                    <el-icon v-else class="el-icon--upload"><upload-filled /></el-icon>
                     <div class="el-upload__text"><el-text class="mx-1" type="success"
                             size="large">将音频文件拖到此处，或<em>点击上传</em></el-text></div>
+
                 </el-upload>
             </el-form-item>
         </el-form>
@@ -66,7 +70,7 @@
             <el-form-item>
                 <el-button @click="cancelForm" type="danger">取消</el-button>
                 <el-button type="primary" :loading="loading" @click="submit">
-                    {{ loading ? '上传中...' : '确定' }}
+                    {{ loading ? (uploadProgress == 100 ? '处理中...' : '上传中...') : '确定' }}
                 </el-button>
             </el-form-item>
         </template>
@@ -79,7 +83,7 @@ import { ElDrawer, ElMessageBox } from 'element-plus'
 import axios from '@/axios'
 import { ElMessage, ElNotification } from 'element-plus'
 import BasicVoice from '@/assets/images/BasicVoice.png'
-import HighFidelitySound from '@/assets/images/HighFidelitySound.png'
+import { ProgressColors } from '@/common/ApplicationConstant'
 
 
 const modelItems = [
@@ -98,9 +102,10 @@ const modelItems = [
     //     type: '20'
     // }
 ]
+const uploadProgress = ref(0)
+const progressVisible = ref(false)
 const popVisible = ref(false)
 const uploadDrawer = ref(false)
-const generateType = ref('')
 const loading = ref(false)
 const form = reactive({
     type: '',
@@ -125,6 +130,21 @@ const cancelForm = () => {
     loading.value = false
     uploadDrawer.value = false
 }
+
+const handleProgress = (event) => {
+    progressVisible.value = true;
+    uploadProgress.value = Math.round(event.percent);
+}
+
+const handleRemove = () => {
+    progressVisible.value = false;
+    uploadProgress.value = 0;
+}
+
+const handleSuccess = (response, file, fileList) => {
+    progressVisible.value = true;
+    uploadProgress.value = 100;
+};
 
 const submit = (async () => {
     uploadForm.value.validate(async (valid) => {
@@ -157,7 +177,11 @@ const submit = (async () => {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },
-                    timeout: 0
+                    timeout: 0,
+                    onUploadProgress: (progressEvent) => {
+                        const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                        handleProgress({ percent: percentCompleted });
+                    }
                 });
                 loading.value = false
                 if (response.status == '200') {
@@ -181,8 +205,6 @@ const submit = (async () => {
         }
     })
 })
-
-
 
 async function checkBeforeSubmit(file) {
     const isLt20M = file.size / 1024 / 1024 <= 20;
