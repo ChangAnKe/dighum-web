@@ -81,7 +81,7 @@
                             <div style="margin-top: 20px">
                                 <el-radio-group v-model="audioWay" @change="audioWayChange">
                                     <el-radio-button label="选择声音" type value="1" />
-                                    <el-radio-button label="本地音频" value="2"/>
+                                    <el-radio-button label="本地音频" value="2" />
                                 </el-radio-group>
                             </div>
                             <div v-if="!localAudio">
@@ -134,8 +134,12 @@
                             <div v-else>
                                 <el-upload class="upload-demo" drag multiple :auto-upload="false" :file-list="audioList"
                                     limit=1 style="margin-top: 20px; width: 800px;" :on-change="handleAudioChange"
-                                    :accept="`.mp3,.m4a,.wav`" :on-remove="removeAudio">
-                                    <img src="@/assets/images/svg/file_upload.svg" alt="Logo" style="width: 50px;" />
+                                    :accept="`.mp3,.m4a,.wav`" :on-progress="handleProgress"
+                                    :on-remove="localAudioHandleRemove">
+                                    <el-progress v-if="localAudioProgressVisible" :percentage="localAudioUploadProgress"
+                                        :color="ProgressColors" type="dashboard"></el-progress>
+                                    <img v-else src="@/assets/images/svg/file_upload.svg" alt="Logo"
+                                        style="width: 50px;" />
                                     <div class="el-upload__text"><el-text class="mx-1" type="success"
                                             size="large">将音频文件拖到此处，或<em>点击上传</em></el-text></div>
                                 </el-upload>
@@ -149,7 +153,7 @@
                         <template #label>
                             <span class="gjxxLabel">分身选择</span>
                             <el-button style="margin-left: 20px;" type="primary"
-                                @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos">
+                                @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos('refresh')">
                                 <Refresh />
                             </el-icon>
                             <el-pagination style="margin-top: 20px;" v-if="videos.length > 0" background
@@ -161,7 +165,6 @@
                                 <el-card v-for="(video, index) in videos" :key="index"
                                     style="width: 250px;height: 200px;" :class="{ 'card-v active': index === viIndex }">
                                     <template #header>
-
                                         <div class="card-header" @click="toggleCheckmarkVi(index, video)">
                                             <el-tooltip class="box-item" effect="dark"
                                                 :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
@@ -232,8 +235,11 @@
                     <el-text class="mx-1" type="danger" style="margin-left: 10px;">文件大小：小于500M</el-text>
                 </div>
                 <el-upload class="upload-demo" drag multiple :auto-upload="false" :file-list="uploadVideoList" limit=1
-                    style="margin-top: 40px;width: 100%;" :on-change="handleCopyVideoChange" :accept="`.mp4,.mov`">
-                    <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+                    style="margin-top: 40px;width: 100%;" :on-change="handleCopyVideoChange" :accept="`.mp4,.mov`"
+                    :on-progress="handleProgress" :on-remove="avatarHandleRemove">
+                    <el-progress v-if="avatarProgressVisible" :percentage="avatarUploadProgress" :color="ProgressColors"
+                        type="dashboard"></el-progress>
+                    <el-icon v-else class="el-icon--upload"><upload-filled /></el-icon>
                     <div class="el-upload__text"><el-text class="mx-1" type="success"
                             size="large">将视频文件拖到此处，或<em>点击上传</em></el-text></div>
                 </el-upload>
@@ -261,6 +267,7 @@ import { notify } from '@/common/Notification'
 import router from '@/router'
 import { deleteResource } from '@/common/ResourceUtils'
 import { useUserStore } from '@/stores/UseUserStore';
+import { ProgressColors } from '@/common/ApplicationConstant'
 
 const store = useUserStore();
 let userInfo = ref(store.getUserInfo);
@@ -313,6 +320,14 @@ const audioWay = ref('1')
 const localAudio = ref(false)
 let audioList = []
 let videoFileName;
+const funFlag = {
+    avatar: "avatar",
+    localAudio: "localAudio"
+}
+const avatarProgressVisible = ref(false)
+const avatarUploadProgress = ref(0)
+const localAudioProgressVisible = ref(false)
+const localAudioUploadProgress = ref(0)
 
 
 watch(form, (newValue, oldValue) => {
@@ -358,6 +373,31 @@ const handlePageChangeVideo = (newPage) => {
     loadMyVideos(); // 切换页码时，重新加载数据
 };
 
+
+const handleProgress = (event) => {
+    switch (event.flag) {
+        case funFlag.avatar:
+            avatarProgressVisible.value = true;
+            avatarUploadProgress.value = Math.round(event.percent);
+        case funFlag.localAudio:
+            localAudioProgressVisible.value = true;
+            localAudioUploadProgress.value = Math.round(event.percent);
+    }
+}
+
+const localAudioHandleRemove = () => {
+    audioList = [];
+    localAudioProgressVisible.value = false;
+    localAudioUploadProgress.value = 0;
+}
+
+const avatarHandleRemove = () => {
+    uploadVideoList = [];
+    avatarProgressVisible.value = false;
+    avatarUploadProgress.value = 0;
+}
+
+
 const loadMyAudios = async () => {
     if (!isTextDrive.value) {
         resourceAudios.tag = 'AI';
@@ -388,7 +428,11 @@ const loadMyAudios = async () => {
 
 }
 
-const loadMyVideos = async () => {
+const loadMyVideos = async (flag) => {
+    if(flag == "refresh") {
+        currentPageVideo.value = 1;
+        pageSizeVideo.value = 8;
+    }
     // 发送请求
     await axios.post("/v1/resource/paging/getResources", resourceVideos, {
         headers: {
@@ -524,13 +568,6 @@ function submitFiles() {
             errorResponse(error);
         });
     }
-    // 添加文件和其他参数
-    // 创建 FormData 对象
-    // const formData = new FormData();
-    // formData.append('fileCom', isTextDrive.value ? 'AV' : 'TV');
-    // formData.append('audio', audioList[0].raw);
-    // formData.append('video', videoList[0].raw);
-
     //音频驱动
     if (!isTextDrive.value) {
         //选择声音模板
@@ -579,7 +616,11 @@ function submitFiles() {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
-                timeout: 300000
+                timeout: 300000,
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    handleProgress({ percent: percentCompleted, flag: funFlag.localAudio });
+                }
             }).then(response => {
                 normalResponse(response);
             }).catch(error => {
@@ -657,7 +698,11 @@ const uploadAndCopyVideo = (async () => {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
-                timeout: 0
+                timeout: 0,
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    handleProgress({ percent: percentCompleted, flag: funFlag.avatar });
+                }
             }).then(response => {
                 cloneLoding.value = false
                 uploadDrawer.value = false
@@ -689,9 +734,7 @@ function handleAudioChange(file, fileList) {
     audioList = fileList;
 }
 
-function removeAudio() {
-    audioList = [];
-}
+
 
 </script>
 
@@ -776,14 +819,14 @@ function removeAudio() {
     width: 150%;
 }
 
-.checkmark {
+/* .checkmark {
     margin-right: 1px;
     font-size: 1.5em;
     color: #00b050;
 
-}
+} */
 
-.select-box {
+/* .select-box {
     display: flex;
 
     .box {
@@ -824,7 +867,7 @@ function removeAudio() {
         transform: rotate(-45deg);
         color: #000;
     }
-}
+} */
 
 .el-icon {
     margin-left: 20px;
