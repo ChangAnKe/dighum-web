@@ -375,13 +375,13 @@ const handlePageChangeVideo = (newPage) => {
 
 
 const handleProgress = (event) => {
-    switch (event.flag) {
-        case funFlag.avatar:
-            avatarProgressVisible.value = true;
-            avatarUploadProgress.value = Math.round(event.percent);
-        case funFlag.localAudio:
-            localAudioProgressVisible.value = true;
-            localAudioUploadProgress.value = Math.round(event.percent);
+    if (event.flag == funFlag.avatar) {
+        avatarProgressVisible.value = true;
+        avatarUploadProgress.value = Math.round(event.percent);
+    }
+    if (event.flag == funFlag.localAudio) {
+        localAudioProgressVisible.value = true;
+        localAudioUploadProgress.value = Math.round(event.percent);
     }
 }
 
@@ -429,7 +429,7 @@ const loadMyAudios = async () => {
 }
 
 const loadMyVideos = async (flag) => {
-    if(flag == "refresh") {
+    if (flag == "refresh") {
         currentPageVideo.value = 1;
         pageSizeVideo.value = 8;
     }
