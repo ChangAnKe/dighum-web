@@ -24,7 +24,7 @@
                         :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
                         placement="top-start">
                         <div class="card-header">
-                            <span style="font-size: 15px;">{{ video.showFileName
+                            <span style="font-size: 15px;">{{ moment(video.createDate).format('HH:mm:ss') + ': ' + video.showFileName
                                 }}</span>
                         </div>
                     </el-tooltip>

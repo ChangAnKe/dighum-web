@@ -26,7 +26,7 @@
                         placement="top-start">
                         <span style="font-size: 15px;"><el-tag size="small" effect="dark" type="success"
                                 :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text> -
-                            </e-text>{{ audio.showFileName
+                            </e-text>{{  moment(audio.createDate).format('HH:mm:ss') + ': ' + audio.showFileName
                             }}</span>
                     </el-tooltip>
                     <el-dropdown @command="handleCommand">
@@ -206,6 +206,7 @@ const getMyAudios = async () => {
     justify-content: space-between;
     align-items: center;
     height: 10px;
+    width: 160px;
 }
 
 .video-description {
