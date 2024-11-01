@@ -3,10 +3,13 @@ import { defineStore } from 'pinia';
 
 export const useUserStore = defineStore({
     id: 'user', // 存储的唯一标识符
-    state: () => ({
-        userInfo: JSON.parse(localStorage.getItem('userInfo')) || null,
-        roles: JSON.parse(localStorage.getItem('userInfo')).userRoles || [] // 用户信息初始为空
-    }),
+    state: () => {
+        const storedUserInfo = JSON.parse(localStorage.getItem('userInfo')) || null; // 解析存储的用户信息
+        return {
+            userInfo: storedUserInfo, // 用户信息初始值
+            roles: (storedUserInfo == null ? [] : storedUserInfo.userRoles) || [] // 用户角色初始值
+        };
+    },
     actions: {
         // 设置用户信息
         setUserInfo(userInfo) {
