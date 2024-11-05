@@ -11,7 +11,7 @@ import PointsMan from './views/users/PointsMan.vue';
 import SubUsersLists from './views/users/SubUsersLists.vue';
 import ChangePwd from './views/users/ChangePwd.vue';
 import UserMenuMan from './views/priman/UserMenuMan.vue';
-import AIHistory from './views/users/AIHistory.vue';
+import BalanceHistory from './views/users/BalanceHistory.vue';
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -29,7 +29,7 @@ const routes = [
       { path: '/subusers/lists', component: SubUsersLists },
       { path: '/changePwd', component:ChangePwd },
       { path: '/priman/userMenusMan', component:UserMenuMan },
-      { path: '/aiHistory', component: AIHistory }
+      { path: '/balanceHistory', component: BalanceHistory }
     ]
   }
 

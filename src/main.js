@@ -13,7 +13,7 @@ import 'element-plus/dist/index.css'
 import 'animate.css';
 import '@/styles/global.css';
 
-import AIFootprint from './views/images/svg/AIFootprint.vue';
+import IconBalanceHistory from './views/images/svg/IconBalanceHistory.vue';
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -22,7 +22,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
-app.component('AIFootprint',AIFootprint);
+app.component('IconBalanceHistory',IconBalanceHistory);
 
 app.use(ElementPlus, {
   locale: zhCn,

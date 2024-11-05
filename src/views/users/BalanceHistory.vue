@@ -9,7 +9,7 @@
                 time-format="HH:mm" value-format="YYYY/MM/DD" />
         </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="getAIHistory" :loading="isLoading">查询</el-button>
+            <el-button type="primary" @click="getBalanceHistory" :loading="isLoading">查询</el-button>
         </el-form-item>
     </el-form>
     <el-table :data="userLogs" style="width: 100%;margin-left: 30px; margin-top: 30px;">
@@ -45,13 +45,13 @@ const searchForm = reactive({
 
 const handleSizeChange = (newPageSize) => {
     pageSize.value = newPageSize;
-    getAIHistory(); // 切换页码时，重新加载数据
+    getBalanceHistory(); // 切换页码时，重新加载数据
 };
 
 
 const handlePageChange = (newPage) => {
     currentPage.value = newPage;
-    getAIHistory(); // 切换页码时，重新加载数据
+    getBalanceHistory(); // 切换页码时，重新加载数据
 };
 
 const formatDate = (row, column, cellValue) => {
@@ -66,8 +66,8 @@ const formatDate = (row, column, cellValue) => {
     return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
 }
 
-function getAIHistory() {
-    axios.post("/v1/auth/user/aiHistory", searchForm, {
+function getBalanceHistory() {
+    axios.post("/v1/auth/user/balanceHistory", searchForm, {
         headers: {
             'Content-Type': 'application/json'
         },

@@ -23,10 +23,6 @@
       <el-aside width="200px">
         <el-scrollbar>
           <el-menu router :default-openeds="['1']">
-            <el-menu-item index="/aiHistory" v-if="store.hasRole('ROOT')">
-              <el-icon>
-                <AIFootprint />
-              </el-icon><span>我的AI足迹</span></el-menu-item>
             <el-sub-menu index="1">
               <template #title>
                 <el-icon>
@@ -100,6 +96,10 @@
                         p-id="8982" fill="#1afa29"></path>
                     </svg></el-icon><span>用户列表</span></el-menu-item> -->
             </el-sub-menu>
+            <el-menu-item index="/balanceHistory">
+              <el-icon>
+                <IconBalanceHistory />
+              </el-icon><span>积分明细</span></el-menu-item>
 
             <!-- <el-sub-menu index="3" v-if="store.hasRole('ROOT')">
               <template #title>
