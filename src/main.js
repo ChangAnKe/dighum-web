@@ -1,3 +1,4 @@
+
 import './assets/main.css'
 
 import { createApp } from 'vue'
@@ -12,6 +13,7 @@ import 'element-plus/dist/index.css'
 import 'animate.css';
 import '@/styles/global.css';
 
+import AIFootprint from './views/images/svg/AIFootprint.vue';
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -19,6 +21,9 @@ const pinia = createPinia()
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
+
+app.component('AIFootprint',AIFootprint);
+
 app.use(ElementPlus, {
   locale: zhCn,
 });

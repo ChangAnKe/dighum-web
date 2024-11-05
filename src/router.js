@@ -10,6 +10,8 @@ import SubUsersReg from './views/users/SubUsersReg.vue';
 import PointsMan from './views/users/PointsMan.vue';
 import SubUsersLists from './views/users/SubUsersLists.vue';
 import ChangePwd from './views/users/ChangePwd.vue';
+import UserMenuMan from './views/priman/UserMenuMan.vue';
+import AIHistory from './views/users/AIHistory.vue';
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -25,7 +27,9 @@ const routes = [
       { path: '/subusers/reg', component: SubUsersReg },
       { path: '/subusers/pointsMan', component: PointsMan },
       { path: '/subusers/lists', component: SubUsersLists },
-      { path: '/changePwd', component:ChangePwd }
+      { path: '/changePwd', component:ChangePwd },
+      { path: '/priman/userMenusMan', component:UserMenuMan },
+      { path: '/aiHistory', component: AIHistory }
     ]
   }
 
