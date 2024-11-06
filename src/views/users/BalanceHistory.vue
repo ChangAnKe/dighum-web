@@ -5,7 +5,7 @@
                 time-format="HH:mm" value-format="YYYY/MM/DD" />
         </el-form-item>
         <el-form-item label="">
-            <el-date-picker v-model="searchForm.endDate" type="datetime" placeholder="结束时间" format="YYYY/MM/DD"
+            <el-date-picker v-model="searchForm.endDate" type="datetime" placeholder="结束日期" format="YYYY/MM/DD"
                 time-format="HH:mm" value-format="YYYY/MM/DD" />
         </el-form-item>
         <el-form-item>
