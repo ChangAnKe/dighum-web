@@ -477,7 +477,7 @@ function handleCopyVideoChange(file, fileList) {
 
 const auIndex = ref(-1)
 let auVoiceId = ''
-let fileName = ''
+let audioFileName = ''
 let audioUrl = ''
 let fishId = ''
 function toggleCheckmarkAu(index, audio) {
@@ -485,7 +485,7 @@ function toggleCheckmarkAu(index, audio) {
     auVoiceId = audio.voiceId
     audioUrl = audio.resourceUrl
     if ("1" === form.output) {
-        fileName = audio.comKey.fileName
+        audioFileName = audio.comKey.fileName
         fishId = audio.fishId
     }
 }
@@ -497,7 +497,6 @@ function toggleCheckmarkVi(index, video) {
     viIndex.value = index
     resUrl = video.resourceUrl
     if ("0" === form.output || !isTextDrive.value) {
-        fileName = video.comKey.fileName;
         videoFileName = video.comKey.fileName;
     }
 }
@@ -543,7 +542,7 @@ function submitFiles() {
             voice_type: 9,
             video_url: '',
             only_generate_audio: null,
-            fileName: fileName,
+            fileName: audioFileName,
             fishId: fishId
         }
         if ("0" === outputType && !isNull(resUrl)) {
