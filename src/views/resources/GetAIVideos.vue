@@ -44,8 +44,8 @@
                 </div>
             </template>
             <VideoPlayer v-if="video.status == 3" width="210px" height="120px"
-                :video-url="dighumUrl + video.resourceUrl" :poster="dighumUrl + video.coverUrl"
-                :id="video.comKey.userId + '@_@' + video.comKey.fileType + '@_@' + video.comKey.fileName" />
+                :video-url="isEmpty(video.resourceUrl) ? video.resourceUrl : (dighumUrl + video.resourceUrl)" :poster="dighumUrl + video.coverUrl"
+                :id="video.comKey.fileType + '@_@' + video.comKey.fileName" />
             <el-text type="danger">{{ Status[video.status] }}</el-text>
         </el-card>
     </div>
@@ -60,6 +60,7 @@ import { ElMessage, ElNotification } from 'element-plus'
 import { Status } from '@/common/Status'
 import moment from 'moment-timezone'
 import { deleteResource, downloadResource } from '@/common/ResourceUtils'
+import { isEmpty } from '@/common/Objects'
 
 const downloadProgress = ref(null);
 const dighumUrl = process.env.DIGHUM_URL;

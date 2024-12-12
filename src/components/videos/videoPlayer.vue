@@ -1,5 +1,5 @@
 <template>
-    <div :width="props.width" :height="props.height" :id="id">
+    <div :width="props.width" :height="props.height" :id="props.id">
         <img v-if="showImage" style="background-color: black; object-fit: cover" :width="props.width"
             :height="props.height" :src="props.poster" @click="clickImage" />
     </div>
@@ -9,6 +9,8 @@
 import { ref } from "vue";
 import Player from "xgplayer";
 import "xgplayer/dist/index.min.css";
+import { isEmpty } from '@/common/Objects'
+import { fetchPreSignedUrl } from "@/common/ResourceUtils";
 
 const props = defineProps({
     id: {
@@ -41,20 +43,26 @@ const showImage = ref(true);
 // 定义一个变量来存储 player 实例
 let player: Player;
 
-const clickImage = () => {
+const clickImage = async () => {
     if (player == null) {
-        initPlayer();
+        console.log("id:" + props.id);
+        console.log("url:" + props.videoUrl);
+        let preSinedUrl = "";
+        if (isEmpty(props.videoUrl)) {
+            preSinedUrl = await fetchPreSignedUrl(props.id);
+        }
+        initPlayer(preSinedUrl);
         showImage.value = false;
     }
 };
 
 // 初始化西瓜视频
-const initPlayer = () => {
+const initPlayer = (preSinedUrl: any) => {
     player = new Player({
         lang: "zh",
         volume: 0.3,
         id: props.id,
-        url: props.videoUrl,
+        url: preSinedUrl || props.videoUrl,
         poster: props.poster,
         playsinline: props.playsinline,
         height: props.height,
