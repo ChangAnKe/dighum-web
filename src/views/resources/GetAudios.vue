@@ -26,7 +26,7 @@
                         placement="top-start">
                         <span style="font-size: 15px;"><el-tag size="small" effect="dark" type="success"
                                 :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text> -
-                            </e-text>{{  moment(audio.createDate).format('HH:mm:ss') + ': ' + audio.showFileName
+                            </e-text>{{ moment(audio.createDate).format('HH:mm:ss') + ': ' + audio.showFileName
                             }}</span>
                     </el-tooltip>
                     <el-dropdown @command="handleCommand">
@@ -44,9 +44,9 @@
                     </el-dropdown>
                 </div>
             </template>
-            <VideoPlayer width="160px" height="60px" :video-url="dighumUrl + audio.resourceUrl"
-                :poster="dighumUrl + audioVoverUrl"
-                :id="audio.comKey.userId + '@_@' + audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
+            <VideoPlayer width="160px" height="60px"
+                :video-url="isEmpty(audio.resourceUrl) ? audio.resourceUrl : (dighumUrl + audio.resourceUrl)"
+                :poster="dighumUrl + audioCoverUrl" :id="audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
         </el-card>
     </div>
 
@@ -65,7 +65,7 @@ import { isEmpty } from '@/common/Objects'
 
 
 const dighumUrl = process.env.DIGHUM_URL;
-const audioVoverUrl = process.env.AUDIO_COVER_URL;
+const audioCoverUrl = process.env.AUDIO_COVER_URL;
 
 let audios = reactive([])
 const resource = reactive({

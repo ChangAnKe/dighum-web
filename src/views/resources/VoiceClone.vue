@@ -173,7 +173,7 @@ const submit = (async () => {
                 //     },
                 //     timeout: 30000
                 // });
-                let response = await axios.put("/v1/resource/createModel", formData, {
+                let response = await axios.put("/v1/resource/cloud/audioClone", formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     },

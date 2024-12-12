@@ -1,20 +1,16 @@
 import axios from '@/axios'
 import { ElNotification } from 'element-plus'
+import { isEmpty } from './Objects';
 
 const dighumUrl = process.env.DIGHUM_URL;
 const downloadResource = (async (resource) => {
-    // const response = await axios.get(dighumUrl + resource.resourceUrl, {
-    //     responseType: 'blob', // 设置响应类型为Blob
-    //     timeout: 300000
-    // });
     let fileName = resource.comKey.fileName;
     if (!resource.comKey.fileName.includes(".")) {
         fileName = fileName + '.' + resource.resourceUrl.split('.').pop();
     }
-    //const url = window.URL.createObjectURL(new Blob([response.data]));
     const link = document.createElement('a');
-    link.href = dighumUrl + resource.resourceUrl;
-    //link.setAttribute('download', fileName); // 设置文件名
+    let preSignedUrl = await fetchPreSignedUrl(resource.comKey.fileType+ '@_@' + resource.comKey.fileName);
+    link.href = isEmpty(resource.resourceUrl) ? preSignedUrl : (dighumUrl + resource.resourceUrl);
     link.setAttribute('target', '_blank');
     document.body.appendChild(link);
     link.click();
@@ -59,4 +55,16 @@ function deleteResource(res, resS) {
     });
 }
 
-export { downloadResource, deleteResource }
+
+const fetchPreSignedUrl = async (id) => {
+    try {
+        let arr = id.split("@_@");
+        const response = await axios.get('/v1/resource/cloud/pres/url/' + arr[0] + '/' + arr[1]);
+        return response.data.url;
+    } catch (error) {
+        console.error("Error fetching fetchPreSignedUrl URL:", error);
+        return "";
+    }
+};
+
+export { downloadResource, deleteResource, fetchPreSignedUrl }

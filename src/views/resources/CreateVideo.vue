@@ -192,9 +192,10 @@
                                             </el-dropdown>
                                         </div>
                                     </template>
-                                    <VideoPlayer width="210px" height="120px" :video-url="dighumUrl + video.resourceUrl"
+                                    <VideoPlayer width="210px" height="120px"
+                                        :video-url="isEmpty(video.resourceUrl) ? video.resourceUrl : (dighumUrl + video.resourceUrl)"
                                         :poster="dighumUrl + video.coverUrl"
-                                        :id="video.comKey.userId + '@_@' + video.comKey.fileType + '@_@' + video.comKey.fileName" />
+                                        :id="video.comKey.fileType + '@_@' + video.comKey.fileName" />
 
                                 </el-card>
                             </div>
@@ -268,6 +269,8 @@ import router from '@/router'
 import { deleteResource } from '@/common/ResourceUtils'
 import { useUserStore } from '@/stores/UseUserStore';
 import { ProgressColors } from '@/common/ApplicationConstant'
+import { isEmpty } from '@/common/Objects'
+import { fetchPreSignedUrl } from '@/common/ResourceUtils'
 
 const store = useUserStore();
 let userInfo = ref(store.getUserInfo);
@@ -318,8 +321,6 @@ const pageSizeVideo = ref(8)
 const totalVideo = ref(0)
 const audioWay = ref('1')
 const localAudio = ref(false)
-let audioList = []
-let videoFileName;
 const funFlag = {
     avatar: "avatar",
     localAudio: "localAudio"
@@ -328,6 +329,17 @@ const avatarProgressVisible = ref(false)
 const avatarUploadProgress = ref(0)
 const localAudioProgressVisible = ref(false)
 const localAudioUploadProgress = ref(0)
+const auIndex = ref(-1)
+const viIndex = ref(-1)
+
+let audioList = []
+let videoFileName;
+let auVoiceId = ''
+let audioFileName = ''
+let audioUrl = ''
+let fishId = ''
+let resUrl = ''
+
 
 
 watch(form, (newValue, oldValue) => {
@@ -399,9 +411,9 @@ const avatarHandleRemove = () => {
 
 
 const loadMyAudios = async () => {
-    if (!isTextDrive.value) {
+    if (!isTextDrive.value) { //音频驱动
         resourceAudios.tag = 'AI';
-    } else {
+    } else { //文本驱动
         resourceAudios.tag = 'AI-Model';
     }
     // 发送请求
@@ -475,27 +487,29 @@ function handleCopyVideoChange(file, fileList) {
     uploadVideoList = fileList;
 }
 
-const auIndex = ref(-1)
-let auVoiceId = ''
-let audioFileName = ''
-let audioUrl = ''
-let fishId = ''
-function toggleCheckmarkAu(index, audio) {
+
+async function toggleCheckmarkAu(index, audio) {
     auIndex.value = index
     auVoiceId = audio.voiceId
     audioUrl = audio.resourceUrl
+    if (isEmpty(audio.resourceUrl)) {
+        let preSinedUrl = await fetchPreSignedUrl(audio.comKey.fileType + "@_@" + audio.comKey.fileName);
+        audioUrl = preSinedUrl;
+    }
     if ("1" === form.output) {
         audioFileName = audio.comKey.fileName
         fishId = audio.fishId
     }
 }
 
-const viIndex = ref(-1)
-let resUrl = ''
 
-function toggleCheckmarkVi(index, video) {
+async function toggleCheckmarkVi(index, video) {
     viIndex.value = index
     resUrl = video.resourceUrl
+    if (isEmpty(video.resourceUrl)) {
+        let preSinedUrl = await fetchPreSignedUrl(video.comKey.fileType + "@_@" + video.comKey.fileName);
+        resUrl = preSinedUrl;
+    }
     if ("0" === form.output || !isTextDrive.value) {
         videoFileName = video.comKey.fileName;
     }
@@ -556,7 +570,7 @@ function submitFiles() {
         }
         isLoading.value = true;
         // 发送请求
-        axios.post("/v1/resource/createTask/text", reqJson, {
+        axios.put("/v1/resource/cloud/textDrive/audio", reqJson, {
             headers: {
                 'Content-Type': 'application/json'
             },
@@ -572,8 +586,8 @@ function submitFiles() {
         //选择声音模板
         if (audioWay.value == "1") {
             let reqJson = {
-                video_url: dighumUrl + resUrl,
-                audio_url: dighumUrl + audioUrl,
+                video_url: resUrl.startsWith("/") ? (dighumUrl + resUrl) : resUrl,
+                audio_url: audioUrl.startsWith("/") ? (dighumUrl + audioUrl) : audioUrl,
                 fileName: videoFileName
             }
             if (reqJson.audio_url == dighumUrl || isNull(reqJson.audio_url)) {
@@ -586,7 +600,7 @@ function submitFiles() {
             }
             isLoading.value = true;
             //发送请求
-            axios.post("/v1/resource/createTask/audio", reqJson, {
+            axios.post("/v1/resource/cloud/audioDrive/createTask", reqJson, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -598,7 +612,7 @@ function submitFiles() {
         }
         //本地音频上传
         if (audioWay.value == "2") {
-            var videoUrl = dighumUrl + resUrl;
+            var videoUrl = resUrl.startsWith("/") ? (dighumUrl + resUrl) : resUrl;
             if (audioList.length == 0) {
                 notify('Warning', '请选择本地音频！', 'warning', 5000);
                 return;
@@ -611,7 +625,7 @@ function submitFiles() {
             formData.append('fileName', videoFileName)
             formData.append('videoUrl', videoUrl)
             formData.append('localAudioFile', audioList[0].raw);
-            axios.put("/v1/resource/createTask/localAudio", formData, {
+            axios.put("/v1/resource/cloud/localAudioDrive/createTask", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
@@ -693,7 +707,7 @@ const uploadAndCopyVideo = (async () => {
             const formData = new FormData();
             formData.append('fileName', modelDighumForm.videoName)
             formData.append('videoFile', uploadVideoList[0].raw);
-            axios.put("/v1/resource/dighumCreate", formData, {
+            axios.put("/v1/resource/cloud/dighumCreate", formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },
