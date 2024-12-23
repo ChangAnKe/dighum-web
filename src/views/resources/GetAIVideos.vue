@@ -24,11 +24,12 @@
                         :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
                         placement="top-start">
                         <div class="card-header">
-                            <span style="font-size: 15px;">{{ moment(video.createDate).format('HH:mm:ss') + ': ' + video.showFileName
+                            <span style="font-size: 15px;">{{ moment(video.createDate).format('HH:mm:ss') + ': ' +
+                                video.showFileName
                                 }}</span>
                         </div>
                     </el-tooltip>
-                    <el-dropdown @command="handleCommand">
+                    <el-dropdown>
                         <span class="el-dropdown-link">
                             <el-icon class="el-icon--right"><arrow-down /></el-icon>
                         </span>
@@ -44,7 +45,8 @@
                 </div>
             </template>
             <VideoPlayer v-if="video.status == 3" width="210px" height="120px"
-                :video-url="isEmpty(video.resourceUrl) ? video.resourceUrl : (dighumUrl + video.resourceUrl)" :poster="dighumUrl + video.coverUrl"
+                :video-url="isEmpty(video.resourceUrl) ? video.resourceUrl : (dighumUrl + video.resourceUrl)"
+                :poster="isCOSUrl(video.coverUrl) ? video.coverUrl : (dighumUrl + video.coverUrl)"
                 :id="video.comKey.fileType + '@_@' + video.comKey.fileName" />
             <el-text type="danger">{{ Status[video.status] }}</el-text>
         </el-card>
@@ -60,7 +62,7 @@ import { ElMessage, ElNotification } from 'element-plus'
 import { Status } from '@/common/Status'
 import moment from 'moment-timezone'
 import { deleteResource, downloadResource } from '@/common/ResourceUtils'
-import { isEmpty } from '@/common/Objects'
+import { isEmpty, isCOSUrl } from '@/common/Objects'
 
 const downloadProgress = ref(null);
 const dighumUrl = process.env.DIGHUM_URL;

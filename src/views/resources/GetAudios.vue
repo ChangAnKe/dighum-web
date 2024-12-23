@@ -25,11 +25,11 @@
                         :content="moment(audio.createDate).utc().tz('Asia/Shanghai').format('YYYY-MM-DD HH:mm:ss') + ': ' + audio.showFileName"
                         placement="top-start">
                         <span style="font-size: 15px;"><el-tag size="small" effect="dark" type="success"
-                                :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <e-text> -
-                            </e-text>{{ moment(audio.createDate).format('HH:mm:ss') + ': ' + audio.showFileName
+                                :key="audio.voiceId">{{ VoiceCloneType[audio.tag] }}</el-tag> <el-text> -
+                            </el-text>{{ moment(audio.createDate).format('HH:mm:ss') + ': ' + audio.showFileName
                             }}</span>
                     </el-tooltip>
-                    <el-dropdown @command="handleCommand">
+                    <el-dropdown>
                         <span class="el-dropdown-link">
                             <el-icon class="el-icon--right"><arrow-down /></el-icon>
                         </span>

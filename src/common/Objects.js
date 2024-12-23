@@ -9,4 +9,22 @@ function isNumber(value) {
     return /^\d+$/.test(value);
 }
 
-export { isEmpty, isNumber }
+
+function isCOSUrl(urlStr) {
+    let isCos = false;
+    try {
+        //创建一个正则表达式来匹配URL中的域名部分
+        const myDomainRegexArr = [/https?:\/\/[^\/]+\.myqcloud\.com/, /^https:\/\/dighum-cos\.aith\.chat\/.*$/];
+        myDomainRegexArr.forEach(regex => {
+            if (regex.test(urlStr)) {
+                isCos = true;
+            }
+        })
+        return isCos;
+    } catch (e) {
+        // 如果提供的不是有效的URL字符串，返回false
+        return false;
+    }
+}
+
+export { isEmpty, isNumber, isCOSUrl }

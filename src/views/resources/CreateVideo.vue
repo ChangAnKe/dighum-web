@@ -194,7 +194,7 @@
                                     </template>
                                     <VideoPlayer width="210px" height="120px"
                                         :video-url="isEmpty(video.resourceUrl) ? video.resourceUrl : (dighumUrl + video.resourceUrl)"
-                                        :poster="dighumUrl + video.coverUrl"
+                                        :poster="isCOSUrl(video.coverUrl) ? video.coverUrl : (dighumUrl + video.coverUrl)"
                                         :id="video.comKey.fileType + '@_@' + video.comKey.fileName" />
 
                                 </el-card>
@@ -250,7 +250,7 @@
             <el-form-item>
                 <el-button @click="cancelForm" type="danger">取消</el-button>
                 <el-button type="primary" :loading="cloneLoding" @click="uploadAndCopyVideo">
-                    {{ loading ? '上传中...' : '确定' }}
+                    {{ cloneLoding ? '上传中...' : '确定' }}
                 </el-button>
             </el-form-item>
         </template>
@@ -269,7 +269,7 @@ import router from '@/router'
 import { deleteResource } from '@/common/ResourceUtils'
 import { useUserStore } from '@/stores/UseUserStore';
 import { ProgressColors } from '@/common/ApplicationConstant'
-import { isEmpty } from '@/common/Objects'
+import { isEmpty, isCOSUrl } from '@/common/Objects'
 import { fetchPreSignedUrl } from '@/common/ResourceUtils'
 
 const store = useUserStore();

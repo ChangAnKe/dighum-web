@@ -45,8 +45,8 @@ let player: Player;
 
 const clickImage = async () => {
     if (player == null) {
-        console.log("id:" + props.id);
-        console.log("url:" + props.videoUrl);
+        //console.log("id:" + props.id);
+        //console.log("url:" + props.videoUrl);
         let preSinedUrl = "";
         if (isEmpty(props.videoUrl)) {
             preSinedUrl = await fetchPreSignedUrl(props.id);

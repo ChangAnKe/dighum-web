@@ -189,10 +189,11 @@ const submit = (async () => {
                     console.log('create model code:' + code)
                     if (code == '0' || code == '200') {
                         ElMessage.success('AI克隆成功！');
-                        uploadDrawer.value = false
+
                     } else {
                         ElMessage.error('AI克隆失败: ' + response.data.remarks);
                     }
+                    uploadDrawer.value = false
                 } else {
                     ElMessage.error('异常，请联系管理员!');
                 }
