@@ -124,9 +124,9 @@
                                             </div>
                                         </template>
                                         <VideoPlayer width="210px" height="120px"
-                                            :video-url="dighumUrl + audio.resourceUrl"
+                                            :video-url="isEmpty(audio.resourceUrl) ? audio.resourceUrl : (dighumUrl + audio.resourceUrl)"
                                             :poster="dighumUrl + audioVoverUrl"
-                                            :id="audio.comKey.userId + '@_@' + audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
+                                            :id="audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
 
                                     </el-card>
                                 </div>
