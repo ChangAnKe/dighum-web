@@ -5,6 +5,7 @@ const ProgressColors = [
     { color: '#1989fa', percentage: 80 },
     { color: '#6f7ad3', percentage: 100 },
 ]
+//统一文件名规则
+const fileNameRegex = /^[A-Za-z0-9-_一-龥]+$/;
 
-
-export { ProgressColors }
+export { ProgressColors, fileNameRegex }

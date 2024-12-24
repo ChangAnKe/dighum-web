@@ -268,7 +268,7 @@ import { notify } from '@/common/Notification'
 import router from '@/router'
 import { deleteResource } from '@/common/ResourceUtils'
 import { useUserStore } from '@/stores/UseUserStore';
-import { ProgressColors } from '@/common/ApplicationConstant'
+import { ProgressColors, fileNameRegex } from '@/common/ApplicationConstant'
 import { isEmpty, isCOSUrl } from '@/common/Objects'
 import { fetchPreSignedUrl } from '@/common/ResourceUtils'
 
@@ -297,7 +297,8 @@ const copyForm = ref(null);
 const rules = reactive({
     videoName: [
         { required: true, message: '视频名称不能为空', trigger: 'blur' },
-        { max: 100, message: '视频名过长', trigger: 'blur' }
+        { max: 100, message: '视频名过长', trigger: 'blur' },
+        { pattern: fileNameRegex, message: '视频名称不能包含特殊字符或中文标点符号', trigger: 'blur' }
     ]
 });
 let uploadVideoList = []
@@ -339,7 +340,6 @@ let audioFileName = ''
 let audioUrl = ''
 let fishId = ''
 let resUrl = ''
-
 
 
 watch(form, (newValue, oldValue) => {

@@ -83,7 +83,7 @@ import { ElDrawer, ElMessageBox } from 'element-plus'
 import axios from '@/axios'
 import { ElMessage, ElNotification } from 'element-plus'
 import BasicVoice from '@/assets/images/BasicVoice.png'
-import { ProgressColors } from '@/common/ApplicationConstant'
+import { ProgressColors, fileNameRegex } from '@/common/ApplicationConstant'
 
 
 const modelItems = [
@@ -116,7 +116,8 @@ const uploadForm = ref(null);
 const rules = reactive({
     audioName: [
         { required: true, message: '声音名称不能为空', trigger: 'blur' },
-        { max: 100, message: '声音名过长', trigger: 'blur' }
+        { max: 100, message: '声音名过长', trigger: 'blur' },
+        { pattern: fileNameRegex, message: '视频名称不能包含特殊字符或中文标点符号', trigger: 'blur' }
     ]
 });
 
