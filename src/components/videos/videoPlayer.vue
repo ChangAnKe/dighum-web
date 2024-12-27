@@ -85,9 +85,9 @@ const initPlayer = (preSinedUrl: any) => {
             // 进度条底色
             progressColor: "",
             // 播放完成部分进度条底色
-            playedColor: "#ff9700",
+            playedColor: "#1e90ff",
             // 缓存部分进度条底色
-            cachedColor: "",
+            cachedColor: "#ff9700",
             // 进度条滑块样式
             sliderBtnStyle: {},
             // 音量颜色
@@ -100,6 +100,8 @@ const initPlayer = (preSinedUrl: any) => {
         preload: "none", // 禁止在播放前加载视频资源
         whitelist: [""]
     });
+    
     player.play();
 };
+
 </script>
