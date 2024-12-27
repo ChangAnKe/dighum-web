@@ -96,7 +96,8 @@ const initPlayer = (preSinedUrl: any) => {
         playbackRate: [0.25, 0.5, 1, 1.5, 2, 3],
         // inactive: 1500, //播放器focus状态自动消失延迟时长，单位为ms
         // leavePlayerTime: 1500, //鼠标移出播放器区域就隐藏时间
-        autoplay: true,
+        autoplay: false, // 禁止自动播放
+        preload: "none", // 禁止在播放前加载视频资源
         whitelist: [""]
     });
     player.play();
