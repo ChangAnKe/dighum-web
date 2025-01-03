@@ -60,7 +60,8 @@
 
 
                                     </template>
-                                    <VideoPlayer width="210px" height="120px" :video-url="isEmpty(audio.resourceUrl) ? audio.resourceUrl : (dighumUrl + audio.resourceUrl)"
+                                    <VideoPlayer width="210px" height="120px"
+                                        :video-url="isEmpty(audio.resourceUrl) ? audio.resourceUrl : (dighumUrl + audio.resourceUrl)"
                                         :poster="dighumUrl + audioVoverUrl"
                                         :id="audio.comKey.fileType + '@_@' + audio.comKey.fileName" />
 
@@ -702,6 +703,10 @@ const uploadAndCopyVideo = (async () => {
             const result = await checkBeforeSubmit(uploadVideoList[0]);
             if (!result) {
                 return;
+            }
+            const fileSize = uploadVideoList[0].size / 1024 / 1024;
+            if (fileSize >= 88) {
+                ElMessage.success('分身文件较大，请耐心等待上传处理！');
             }
             cloneLoding.value = true
             const formData = new FormData();
