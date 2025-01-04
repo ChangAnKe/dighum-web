@@ -15,7 +15,7 @@ const downloadResource = (async (resource) => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link); // 清理
-    window.URL.revokeObjectURL(url); // 释放URL对
+    window.URL.revokeObjectURL(preSignedUrl); // 释放URL对
 })
 
 function deleteResource(res, resS) {
