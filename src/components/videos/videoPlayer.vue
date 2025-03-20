@@ -47,7 +47,7 @@ const clickImage = async () => {
     if (player == null) {
         //console.log("id:" + props.id);
         //console.log("url:" + props.videoUrl);
-        let preSinedUrl = "";
+        let preSinedUrl = "1";
         if (isEmpty(props.videoUrl)) {
             preSinedUrl = await fetchPreSignedUrl(props.id);
         }
@@ -100,7 +100,7 @@ const initPlayer = (preSinedUrl: any) => {
         preload: "none", // 禁止在播放前加载视频资源
         whitelist: [""]
     });
-    
+
     player.play();
 };
 

@@ -13,6 +13,11 @@
                 <el-form-item label="邮箱" prop="email">
                     <el-input v-model="userForm.email"></el-input>
                 </el-form-item>
+                <el-form-item label="行业" prop="industry" v-if="store.hasRole('ROOT')">
+                    <el-select v-model="userForm.industry" placeholder="请选择" size="large">
+                        <el-option v-for="(value, key) in Industry" :key="key" :label="value" :value="key" />
+                    </el-select>
+                </el-form-item>
                 <el-form-item label="备注" prop="remarks">
                     <el-input v-model="userForm.remarks"></el-input>
                 </el-form-item>
@@ -29,7 +34,9 @@ import User from '@/common/dto/User';
 import axios from '@/axios';
 import { notify } from '@/common/Notification';
 import { useUserStore } from '@/stores/UseUserStore';
+import { Industry } from '@/common/Options';
 
+const store = useUserStore();
 const userForm = reactive(new User());
 const userFormRef = ref(null);
 const rules = reactive({
@@ -44,7 +51,8 @@ const rules = reactive({
     phoneNumber: [
         { required: true, message: '请输入手机号码', trigger: 'blur' },
         { pattern: /^1\d{10}$/, message: '请输入有效的手机号码', trigger: 'blur' }
-    ]
+    ],
+    industry: [{ required: true, message: '请选择行业', trigger: 'blur' }]
 });
 const userInfo = useUserStore().getUserInfo;
 

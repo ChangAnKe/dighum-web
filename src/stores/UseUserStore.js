@@ -43,6 +43,12 @@ export const useUserStore = defineStore({
                 return true;
             }
             return state.roles.includes(role);
+        },
+        applyToIndustry: (state) => (industry) => {
+            if (state.roles.includes('ROOT') || state.userInfo.industry == industry) {
+                return true;
+            }
+            return false;
         }
     }
 });

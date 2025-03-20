@@ -5,7 +5,7 @@
         </el-form-item>
         <el-form-item label="作品状态">
             <el-select v-model="resource.status" placeholder="请选择" size="large" style="width: 240px">
-                <el-option v-for="(value, key) in Status" :key="key" :label="value" :value="key" />
+                <el-option v-for="(value, key) in GlobalQueryStatus" :key="key" :label="value" :value="key" />
             </el-select>
         </el-form-item>
         <el-form-item>
@@ -26,7 +26,7 @@
                         <div class="card-header">
                             <span style="font-size: 15px;">{{ moment(video.createDate).format('HH:mm:ss') + ': ' +
                                 video.showFileName
-                                }}</span>
+                            }}</span>
                         </div>
                     </el-tooltip>
                     <el-dropdown>
@@ -44,7 +44,7 @@
                     </el-dropdown>
                 </div>
             </template>
-            <VideoPlayer v-if="video.status == 3" width="210px" height="120px"
+            <VideoPlayer v-if="['3', 'DM_4'].includes(video.status)" width="210px" height="120px"
                 :video-url="isEmpty(video.resourceUrl) ? video.resourceUrl : (dighumUrl + video.resourceUrl)"
                 :poster="isCOSUrl(video.coverUrl) ? video.coverUrl : (dighumUrl + video.coverUrl)"
                 :id="video.comKey.fileType + '@_@' + video.comKey.fileName" />
@@ -59,7 +59,7 @@ import { ref, reactive } from 'vue'
 import VideoPlayer from "@/components/videos/videoPlayer.vue"
 import axios from '@/axios'
 import { ElMessage, ElNotification } from 'element-plus'
-import { Status } from '@/common/Status'
+import { Status, GlobalQueryStatus } from '@/common/Status'
 import moment from 'moment-timezone'
 import { deleteResource, downloadResource } from '@/common/ResourceUtils'
 import { isEmpty, isCOSUrl } from '@/common/Objects'
@@ -93,6 +93,7 @@ const handlePageChange = (newPage) => {
 };
 
 const getMyVideos = async () => {
+    videos.length = 0;
     isLoading.value = true;
     // 发送请求
     await axios.post("/v1/resource/paging/getResources", resource, {
@@ -123,59 +124,6 @@ const getMyVideos = async () => {
         ElMessage.error('获取视频列表失败，请联系管理员！');
     });
 }
-
-// const downloadResource = (async (video) => {
-//     const response = await axios.get(dighumUrl + video.resourceUrl, {
-//         responseType: 'blob' // 设置响应类型为Blob
-//     });
-//     const url = window.URL.createObjectURL(new Blob([response.data]));
-//     const link = document.createElement('a');
-//     link.href = url;
-//     const fileExtension = video.resourceUrl.split('.').pop();
-//     link.setAttribute('download', video.comKey.fileName + '.' + fileExtension); // 设置文件名
-//     document.body.appendChild(link);
-//     link.click();
-//     document.body.removeChild(link); // 清理
-//     window.URL.revokeObjectURL(url); // 释放URL对
-// })
-
-// function deleteResource(video) {
-//     axios.delete("/v1/resource/deleteResource", { data: video }, {
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     }).then(response => {
-//         if (response.status = '200') {
-//             const index = videos.findIndex(resource =>
-//                 resource.comKey.userId === video.comKey.userId &&
-//                 resource.comKey.fileType === video.comKey.fileType &&
-//                 resource.comKey.fileName === video.comKey.fileName
-//             );
-//             if (index !== -1) {
-//                 videos.splice(index, 1);
-//                 ElNotification({
-//                     title: 'Success',
-//                     message: '删除成功',
-//                     type: 'success',
-//                 });
-//             }
-//         } else {
-//             ElNotification({
-//                 title: 'Error ',
-//                 message: '删除失败，请联系管理员！',
-//                 type: 'error',
-//             })
-//         }
-
-//     }).catch(error => {
-//         ElNotification({
-//             title: 'Error ',
-//             message: '内部异常，请联系管理员！' + error,
-//             type: 'error',
-//         })
-//     });
-// }
-
 
 </script>
 

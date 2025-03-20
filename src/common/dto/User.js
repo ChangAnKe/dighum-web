@@ -9,6 +9,7 @@ class User {
         this.balance = 0;
         this.parentUserId = '';
         this.remarks = '';
+        this.industry = '';
     }
 }
 

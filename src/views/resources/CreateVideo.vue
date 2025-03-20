@@ -1,5 +1,5 @@
 <template>
-    <el-switch v-model="isTextDrive" class="mb-2"
+    <el-switch v-if="store.applyToIndustry('ED') || isEmpty(store.getUserInfo.industry)" v-model="isTextDrive" class="mb-2"
         style="--el-switch-on-color: #13ce66; --el-switch-off-color: #00BFFF;left: 85px;" active-text="文本驱动"
         inactive-text="音频驱动" @onclick="switchTypes" />
     <div class="scrollable-container">
@@ -154,7 +154,8 @@
                         <template #label>
                             <span class="gjxxLabel">分身选择</span>
                             <el-button style="margin-left: 20px;" type="primary"
-                                @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos('refresh')">
+                                @click="openDrawer">点击复刻分身</el-button><el-icon @click="loadMyVideos('refresh')"
+                                style="color: #6771ff;font-size: 25px; top: 8px;">
                                 <Refresh />
                             </el-icon>
                             <el-pagination style="margin-top: 20px;" v-if="videos.length > 0" background
@@ -171,7 +172,7 @@
                                                 :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
                                                 placement="top-start">
                                                 <span style="font-size: 15px;">{{ video.showFileName
-                                                    }}</span></el-tooltip>
+                                                }}</span></el-tooltip>
                                             <div :class="{ 'div-checkmark active': index === viIndex }">
                                                 <span :class="{ 'checkmark active': index === viIndex }"
                                                     v-if="index == viIndex">
@@ -359,8 +360,10 @@ watch(isTextDrive, (newValue, oldValue) => {
     if (newValue === false) { //仅音频
         audios.length = 0;
         loadMyAudios();
+        auIndex.value = -1;
     } else {
         loadMyAudios();
+        auIndex.value = -1;
     }
 }, { deep: true })
 
@@ -575,7 +578,7 @@ function submitFiles() {
             headers: {
                 'Content-Type': 'application/json'
             },
-            timeout: 120000
+            timeout: 0
         }).then(response => {
             normalResponse(response);
         }).catch(error => {
@@ -789,7 +792,7 @@ function handleAudioChange(file, fileList) {
     display: flex;
     flex-wrap: wrap;
     /* If you want the cards to wrap to the next line when space runs out */
-    justify-content: space-between;
+    justify-content: flex-start;
     /* Space between cards */
     gap: 1rem;
 
@@ -836,56 +839,6 @@ function handleAudioChange(file, fileList) {
 .el-tooltip {
     width: 150%;
 }
-
-/* .checkmark {
-    margin-right: 1px;
-    font-size: 1.5em;
-    color: #00b050;
-
-} */
-
-/* .select-box {
-    display: flex;
-
-    .box {
-        width: 86px;
-        height: 36px;
-        line-height: 36px;
-        background: rgba(30, 37, 48, 0.6);
-        border: 1px solid #67e5ff;
-        border-radius: 4px;
-        font-size: 14px;
-        color: #67e5ff;
-        text-align: center;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .box:nth-child(-n + 3) {
-        margin-right: 16px;
-    }
-
-    .box .box-con {
-        width: 30px;
-        height: 30px;
-        position: absolute;
-        background: #67e5ff;
-        top: -15px;
-        right: -15px;
-        transform: rotate(45deg);
-    }
-
-    .box .box-con span {
-        position: absolute;
-        bottom: 0;
-        display: block;
-        width: 24px;
-        height: 24px;
-        text-align: center;
-        transform: rotate(-45deg);
-        color: #000;
-    }
-} */
 
 .el-icon {
     margin-left: 20px;

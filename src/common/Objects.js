@@ -14,7 +14,7 @@ function isCOSUrl(urlStr) {
     let isCos = false;
     try {
         //创建一个正则表达式来匹配URL中的域名部分
-        const myDomainRegexArr = [/https?:\/\/[^\/]+\.myqcloud\.com/, /^https:\/\/dighum-cos\.aith\.chat\/.*$/];
+        const myDomainRegexArr = [/https?:\/\/[^\/]+\.myqcloud\.com/, /^https:\/\/dighum-cos\.aith\.chat\/.*$/, /^https:\/\/dighum-cos-cdn\.aith\.chat\/.*$/];
         myDomainRegexArr.forEach(regex => {
             if (regex.test(urlStr)) {
                 isCos = true;
@@ -27,4 +27,11 @@ function isCOSUrl(urlStr) {
     }
 }
 
-export { isEmpty, isNumber, isCOSUrl }
+function isResChecked(checkedVar, index) {
+    if (checkedVar.value != -1 && checkedVar.value == index) {
+        return true;
+    }
+    return false;
+}
+
+export { isEmpty, isNumber, isCOSUrl, isResChecked }

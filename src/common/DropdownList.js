@@ -8,4 +8,9 @@ const Tag = reactive({
     // 更多的键值对
 });
 
-export { Tag };
+const Gender = reactive({
+    'male': "男",
+    'female': "女"
+});
+
+export { Tag, Gender };
