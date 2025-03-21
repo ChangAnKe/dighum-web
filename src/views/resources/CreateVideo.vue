@@ -1,5 +1,5 @@
 <template>
-    <el-switch v-if="store.applyToIndustry('ED') || isEmpty(store.getUserInfo.industry)" v-model="isTextDrive" class="mb-2"
+    <el-switch v-if="store.applyToIndustry('ME') || isEmpty(store.getUserInfo.industry)" v-model="isTextDrive" class="mb-2"
         style="--el-switch-on-color: #13ce66; --el-switch-off-color: #00BFFF;left: 85px;" active-text="文本驱动"
         inactive-text="音频驱动" @onclick="switchTypes" />
     <div class="scrollable-container">
