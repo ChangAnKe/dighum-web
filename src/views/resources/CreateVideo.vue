@@ -1,13 +1,23 @@
 <template>
-    <el-switch v-if="store.applyToIndustry('ME') || isEmpty(store.getUserInfo.industry)" v-model="isTextDrive" class="mb-2"
-        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #00BFFF;left: 85px;" active-text="文本驱动"
-        inactive-text="音频驱动" @onclick="switchTypes" />
+    <el-switch v-if="store.applyToIndustry('ME') || isEmpty(store.getUserInfo.industry)" v-model="isTextDrive"
+        class="mb-2" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #00BFFF;left: 85px;"
+        active-text="文本驱动" inactive-text="音频驱动" @onclick="switchTypes" />
     <div class="scrollable-container">
         <el-form ref="formRef" :model="form" label-width="80px" :label-position="top" class="driver-form">
             <!-- 文本驱动 -->
             <div v-if="isTextDrive">
-                <el-form-item><el-input v-model="form.textarea" maxlength="2000" style="width: 900px;margin-top: 50px;"
-                        placeholder="请输入文本" show-word-limit type="textarea" :rows=5></el-input></el-form-item>
+                <el-form-item style="margin-top: 30px;">
+                    <template #label>
+                        <el-text style="font-weight: bolder; color: black;">细粒度控制（需添加<|phoneme_start|>标签），如：</el-text>
+                        <el-text style="color: red;font-weight: bolder;">给</el-text>
+                        <el-text style="color: #00BFFF;">予</el-text> 
+                        <el-text style="font-weight: bolder; color: black;">&nbsp;&nbsp;可修改为&nbsp;&nbsp;</el-text> 
+                        <el-text style="font-weight: bolder;color: red;"><|phoneme_start|>ji3<|phoneme_start|></el-text>
+                        <el-text style="color: #00BFFF;">予</el-text>
+                        <el-text style="font-weight: bolder;color: black">,  数字3代表取第三声</el-text>
+                    </template>
+                    <el-input v-model="form.textarea" maxlength="2000" style="width: 900px;"
+                        placeholder="老师<|phoneme_start|>ji3<|phoneme_start|>予了我很多鼓励，让我在困难面前不再退缩。" show-word-limit type="textarea" :rows=5></el-input></el-form-item>
                 <el-form-item>
                     <template #label>
                         <span class="gjxxLabel">高级选项</span>
@@ -172,7 +182,7 @@
                                                 :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
                                                 placement="top-start">
                                                 <span style="font-size: 15px;">{{ video.showFileName
-                                                }}</span></el-tooltip>
+                                                    }}</span></el-tooltip>
                                             <div :class="{ 'div-checkmark active': index === viIndex }">
                                                 <span :class="{ 'checkmark active': index === viIndex }"
                                                     v-if="index == viIndex">
