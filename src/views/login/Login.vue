@@ -14,9 +14,17 @@
           <el-form-item prop="password">
             <el-input type="password" v-model="form.password" prefix-icon="Lock" autocomplete="current-password"
               placeholder="密码" size="large" show-password style="padding-top: 30px;"><template #suffix>
-                <el-button type="text" size="mini" @click="handleForgotPassword"
+                <el-button type="text" size="default" @click="handleForgotPassword"
                   style="color: #2a598a; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;">忘记密码</el-button>
               </template> </el-input>
+          </el-form-item>
+          <el-form-item prop="aggrementsChecked">
+            <el-tooltip content="请勾选" placement="top" :disabled="form.aggrementsChecked">
+              <el-checkbox v-model="form.aggrementsChecked" label="" /></el-tooltip>
+            我已阅读并同意&nbsp;&nbsp;
+            <el-link type="primary" class="aggrements" @click="showAgreement('user')">《用户协议》</el-link>
+            <el-link type="primary" class="aggrements" @click="showAgreement('privacy')">《隐私政策》</el-link>
+            <el-link type="primary" class="aggrements" @click="showAgreement('disclaimer')">《免责声明》</el-link>
           </el-form-item>
           <el-button class="success" type="success" @click="loginRequest" size="large" @keydown.enter="handleKeydown()"
             :loading="isLoading">登录</el-button>
@@ -28,6 +36,8 @@
     </div>
   </div>
 
+  <Agreements v-model="isAgreementVisible" :currentAgreement="currentAgreement" />
+
 
 </template>
 
@@ -37,12 +47,14 @@ import { ElMessage } from 'element-plus';
 import { useRouter } from 'vue-router'
 import axios from '@/axios'
 import { useUserStore } from '@/stores/UseUserStore';
+import Agreements from './Agreements.vue';
 
 const router = useRouter();
 const isLoading = ref(false);
 const form = reactive({
   userId: '',
-  password: ''
+  password: '',
+  aggrementsChecked: false
 });
 const rules = reactive({
   userId: [
@@ -52,12 +64,24 @@ const rules = reactive({
   password: [
     { required: true, message: '请输入密码', trigger: 'blur' },
     { min: 6, max: 40, message: '长度在 6 到 40 个字符', trigger: 'blur' }
+  ],
+  aggrementsChecked: [{ 
+      validator: (rule, value, callback) => {
+        if (!value) {
+          callback(new Error('请先阅读并同意相关协议'));
+        } else {
+          callback();
+        }
+      },
+      trigger: ['change', 'blur']
+    }
   ]
 });
 const loginForm = ref(null);
-const dighumUrl = process.env.DIGHUM_URL;
 const store = useUserStore();
-
+const aggrementsChecked = ref(false)
+const isAgreementVisible = ref(false)
+const currentAgreement = ref('')
 
 onMounted(() => {
   window.addEventListener("keydown", handleKeydown);
@@ -128,6 +152,11 @@ const register = (() => {
   router.push('/register');
 })
 
+const showAgreement = (curAgree) => {
+  isAgreementVisible.value = true;
+  currentAgreement.value = curAgree;
+}
+
 </script>
 
 <style scoped>
@@ -156,7 +185,7 @@ const register = (() => {
 
 .el-form {
   width: 500px;
-  height: 500px;
+  height: 510px;
 }
 
 .el-text {
@@ -173,7 +202,7 @@ const register = (() => {
   width: 500px;
   height: 50px;
   font-size: 20px;
-  margin-top: 30px;
+  margin-top: 10px;
 }
 
 .footer {
@@ -230,5 +259,9 @@ const register = (() => {
   }
 
 
+}
+
+.aggrements {
+  font-size: medium;
 }
 </style>
