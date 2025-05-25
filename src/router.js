@@ -3,6 +3,7 @@ import Homepage from './views/Homepage.vue';
 import Login from '@/views/login/Login.vue';
 import Calender from './views/Calender.vue';
 import CreateVideo from './views/resources/CreateVideo.vue';
+import CreateVideoPro from './views/resources/CreateVideoPro.vue';
 import MyResources from './views/resources/MyResources.vue';
 import Register from './views/login/Register.vue';
 import VoiceClone from './views/resources/VoiceClone.vue';
@@ -23,6 +24,7 @@ const routes = [
     children: [
       { path: '', component: Calender },
       { path: '/createVideo', component: CreateVideo },
+      { path: '/createVideoPro', component: CreateVideoPro },
       { path: '/myResources', component: MyResources },
       { path: '/voiceClone', component: VoiceClone },
       { path: '/subusers/reg', component: SubUsersReg },
