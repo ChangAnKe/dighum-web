@@ -94,6 +94,7 @@ const handlePageChange = (newPage) => {
 };
 
 const getMyAudios = async () => {
+    audios.length = 0;
     isLoading.value = true;
     resource.tag = isEmpty(resource.tag) ? 'AI' : resource.tag;
     console.log('resource.tag');
