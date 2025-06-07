@@ -3,21 +3,29 @@
         class="mb-2" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #00BFFF;left: 85px;"
         active-text="文本驱动" inactive-text="音频驱动" @onclick="switchTypes" />
     <div class="scrollable-container">
-        <el-form ref="formRef" :model="form" label-width="80px" :label-position="top" class="driver-form">
+        <el-form ref="formRef" :model="form" label-width="80px" :label-position="top" class="driver-form"
+            :rules="driveRules">
             <!-- 文本驱动 -->
             <div v-if="isTextDrive">
-                <el-form-item style="margin-top: 30px;">
+                <el-form-item style="margin-top: 30px;" prop="newFileName">
+                    <el-input v-model="form.newFileName" placeholder="请输入文件名（非必填）" style="width: 900px;" maxlength="50"
+                        show-word-limit />
+                </el-form-item>
+                <el-form-item>
                     <template #label>
                         <el-text style="font-weight: bolder; color: black;">细粒度控制（需添加<|phoneme_start|>标签），如：</el-text>
                         <el-text style="color: red;font-weight: bolder;">给</el-text>
-                        <el-text style="color: #00BFFF;">予</el-text> 
-                        <el-text style="font-weight: bolder; color: black;">&nbsp;&nbsp;可修改为&nbsp;&nbsp;</el-text> 
-                        <el-text style="font-weight: bolder;color: red;"><|phoneme_start|>ji3<|phoneme_start|></el-text>
                         <el-text style="color: #00BFFF;">予</el-text>
-                        <el-text style="font-weight: bolder;color: black">,  数字3代表取第三声</el-text>
+                        <el-text style="font-weight: bolder; color: black;">&nbsp;&nbsp;可修改为&nbsp;&nbsp;</el-text>
+                        <el-text style="font-weight: bolder;color: red;">
+                            <|phoneme_start|>ji3<|phoneme_start|>
+                        </el-text>
+                        <el-text style="color: #00BFFF;">予</el-text>
+                        <el-text style="font-weight: bolder;color: black">, 数字3代表取第三声</el-text>
                     </template>
                     <el-input v-model="form.textarea" maxlength="2000" style="width: 900px;"
-                        placeholder="老师<|phoneme_start|>ji3<|phoneme_start|>予了我很多鼓励，让我在困难面前不再退缩。" show-word-limit type="textarea" :rows=5></el-input></el-form-item>
+                        placeholder="老师<|phoneme_start|>ji3<|phoneme_start|>予了我很多鼓励，让我在困难面前不再退缩。" show-word-limit
+                        type="textarea" :rows=5></el-input></el-form-item>
                 <el-form-item>
                     <template #label>
                         <span class="gjxxLabel">高级选项</span>
@@ -85,6 +93,10 @@
 
             <!-- 音频驱动 -->
             <div v-if="!isTextDrive">
+                <el-form-item style="margin-top: 30px;" prop="newFileName">
+                    <el-input v-model="form.newFileName" placeholder="请输入文件名（非必填）" style="width: 900px;" maxlength="50"
+                        show-word-limit />
+                </el-form-item>
                 <el-form-item>
                     <el-form-item>
                         <template #label>
@@ -182,7 +194,7 @@
                                                 :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
                                                 placement="top-start">
                                                 <span style="font-size: 15px;">{{ video.showFileName
-                                                    }}</span></el-tooltip>
+                                                }}</span></el-tooltip>
                                             <div :class="{ 'div-checkmark active': index === viIndex }">
                                                 <span :class="{ 'checkmark active': index === viIndex }"
                                                     v-if="index == viIndex">
@@ -296,6 +308,7 @@ const fenshenShow = ref(true)
 const formRef = ref(null)
 const uploadDrawer = ref(false)
 let form = reactive({
+    newFileName: '',
     output: '1',
     textarea: ''
 })
@@ -306,6 +319,11 @@ const modelDighumForm = reactive({
     videoName: ''
 })
 const copyForm = ref(null);
+const driveRules = reactive({
+    newFileName: [
+        { pattern: fileNameRegex, message: '文件名不能包含特殊字符或中文标点符号', trigger: 'blur' }
+    ]
+});
 const rules = reactive({
     videoName: [
         { required: true, message: '视频名称不能为空', trigger: 'blur' },
@@ -354,26 +372,28 @@ let fishId = ''
 let resUrl = ''
 
 
-watch(form, (newValue, oldValue) => {
-    if (newValue.output === '1') { //仅音频
-        videos.length = 0;
-        fenshenShow.value = false;
-    }
-    if (newValue.output === '0') {
-        fenshenShow.value = true;
-        loadMyVideos();
-    }
-}, { deep: true })
+// watch(form, (newValue, oldValue) => {
+//     if (newValue.output === '1') { //仅音频
+//         videos.length = 0;
+//         fenshenShow.value = false;
+//     }
+//     if (newValue.output === '0') {
+//         fenshenShow.value = true;
+//         loadMyVideos();
+//     }
+// }, { deep: true })
 
 watch(isTextDrive, (newValue, oldValue) => {
     isButtonDisabled.value = false;
-    if (newValue === false) { //仅音频
-        audios.length = 0;
-        loadMyAudios();
-        auIndex.value = -1;
-    } else {
-        loadMyAudios();
-        auIndex.value = -1;
+    form.newFileName = '';
+    audios.length = 0;
+    loadMyAudios();
+    auIndex.value = -1;
+    //音频驱动
+    if (newValue === false) {
+        videos.length = 0;
+        loadMyVideos();
+        viIndex.value = -1;
     }
 }, { deep: true })
 
@@ -485,10 +505,7 @@ const loadMyVideos = async (flag) => {
 }
 
 onMounted(() => {
-    if (form.output === '1') {
-        loadMyAudios();
-        loadMyVideos();
-    }
+    loadMyAudios();
 });
 
 const openDrawer = (type) => {
@@ -561,7 +578,9 @@ function isNull(obj) {
 }
 
 // 提交文件
-function submitFiles() {
+async function submitFiles() {
+    const valid = await formRef.value.validate();
+    if (!valid) return;
     var outputType = form.output;
     //文本驱动
     if (isTextDrive.value) {
@@ -573,7 +592,8 @@ function submitFiles() {
             video_url: '',
             only_generate_audio: null,
             fileName: audioFileName,
-            fishId: fishId
+            fishId: fishId,
+            newFileName: form.newFileName
         }
         if ("0" === outputType && !isNull(resUrl)) {
             reqJson.video_url = dighumUrl + resUrl;
@@ -604,7 +624,8 @@ function submitFiles() {
             let reqJson = {
                 video_url: resUrl.startsWith("/") ? (dighumUrl + resUrl) : resUrl,
                 audio_url: audioUrl.startsWith("/") ? (dighumUrl + audioUrl) : audioUrl,
-                fileName: videoFileName
+                fileName: videoFileName,
+                newFileName: form.newFileName
             }
             if (reqJson.audio_url == dighumUrl || isNull(reqJson.audio_url)) {
                 notify('Warning', '请选择音频！', 'warning', 5000);
@@ -638,7 +659,7 @@ function submitFiles() {
                 return;
             }
             const formData = new FormData();
-            formData.append('fileName', videoFileName)
+            formData.append('fileName', videoFileName + "@@" + form.newFileName)
             formData.append('videoUrl', videoUrl)
             formData.append('localAudioFile', audioList[0].raw);
             axios.put("/v1/resource/cloud/localAudioDrive/createTask", formData, {

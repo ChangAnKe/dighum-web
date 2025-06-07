@@ -6,7 +6,11 @@
         <el-form ref="formRef" :model="form" label-width="80px" :label-position="top" class="driver-form">
             <!-- 文本驱动 -->
             <div v-if="isTextDrive">
-                <el-form-item style="margin-top: 30px;">
+                <el-form-item style="margin-top: 30px;" prop="newFileName">
+                    <el-input v-model="form.newFileName" placeholder="请输入文件名（非必填）" style="width: 900px;" maxlength="50"
+                        show-word-limit />
+                </el-form-item>
+                <el-form-item>
                     <template #label>
                         <el-text style="font-weight: bolder; color: black;">细粒度控制（需添加<|phoneme_start|>标签），如：</el-text>
                         <el-text style="color: red;font-weight: bolder;">给</el-text>
@@ -88,6 +92,10 @@
 
             <!-- 音频驱动 -->
             <div v-if="!isTextDrive">
+                <el-form-item style="margin-top: 30px;" prop="newFileName">
+                    <el-input v-model="form.newFileName" placeholder="请输入文件名（非必填）" style="width: 900px;" maxlength="50"
+                        show-word-limit />
+                </el-form-item>
                 <el-form-item>
                     <el-form-item>
                         <template #label>
@@ -299,6 +307,7 @@ const fenshenShow = ref(true)
 const formRef = ref(null)
 const uploadDrawer = ref(false)
 let form = reactive({
+    newFileName: '',
     output: '1',
     textarea: ''
 })
@@ -309,6 +318,11 @@ const modelDighumForm = reactive({
     videoName: ''
 })
 const copyForm = ref(null);
+const driveRules = reactive({
+    newFileName: [
+        { pattern: fileNameRegex, message: '文件名不能包含特殊字符或中文标点符号', trigger: 'blur' }
+    ]
+});
 const rules = reactive({
     videoName: [
         { required: true, message: '视频名称不能为空', trigger: 'blur' },
@@ -357,26 +371,28 @@ let fishId = ''
 let resUrl = ''
 
 
-watch(form, (newValue, oldValue) => {
-    if (newValue.output === '1') { //仅音频
-        videos.length = 0;
-        fenshenShow.value = false;
-    }
-    if (newValue.output === '0') {
-        fenshenShow.value = true;
-        loadMyVideos();
-    }
-}, { deep: true })
+// watch(form, (newValue, oldValue) => {
+//     if (newValue.output === '1') { //仅音频
+//         videos.length = 0;
+//         fenshenShow.value = false;
+//     }
+//     if (newValue.output === '0') {
+//         fenshenShow.value = true;
+//         loadMyVideos();
+//     }
+// }, { deep: true })
 
 watch(isTextDrive, (newValue, oldValue) => {
     isButtonDisabled.value = false;
-    if (newValue === false) { //仅音频
-        audios.length = 0;
-        loadMyAudios();
-        auIndex.value = -1;
-    } else {
-        loadMyAudios();
-        auIndex.value = -1;
+    form.newFileName = '';
+    audios.length = 0;
+    loadMyAudios();
+    auIndex.value = -1;
+    //音频驱动
+    if (newValue === false) {
+        videos.length = 0;
+        loadMyVideos();
+        viIndex.value = -1;
     }
 }, { deep: true })
 
@@ -487,10 +503,7 @@ const loadMyVideos = async (flag) => {
 }
 
 onMounted(() => {
-    if (form.output === '1') {
-        loadMyAudios();
-        loadMyVideos();
-    }
+    loadMyAudios();
 });
 
 const openDrawer = (type) => {
@@ -563,7 +576,9 @@ function isNull(obj) {
 }
 
 // 提交文件
-function submitFiles() {
+async function submitFiles() {
+    const valid = await formRef.value.validate();
+    if (!valid) return;
     var outputType = form.output;
     //文本驱动
     if (isTextDrive.value) {
@@ -575,7 +590,8 @@ function submitFiles() {
             video_url: '',
             only_generate_audio: null,
             fileName: audioFileName,
-            fishId: fishId
+            fishId: fishId,
+            newFileName: form.newFileName
         }
         if ("0" === outputType && !isNull(resUrl)) {
             reqJson.video_url = dighumUrl + resUrl;
@@ -606,7 +622,8 @@ function submitFiles() {
             let reqJson = {
                 video_url: resUrl.startsWith("/") ? (dighumUrl + resUrl) : resUrl,
                 audio_url: audioUrl.startsWith("/") ? (dighumUrl + audioUrl) : audioUrl,
-                fileName: videoFileName
+                fileName: videoFileName,
+                newFileName: form.newFileName
             }
             if (reqJson.audio_url == dighumUrl || isNull(reqJson.audio_url)) {
                 notify('Warning', '请选择音频！', 'warning', 5000);
@@ -640,7 +657,7 @@ function submitFiles() {
                 return;
             }
             const formData = new FormData();
-            formData.append('fileName', videoFileName)
+            formData.append('fileName', videoFileName + "@@" + form.newFileName)
             formData.append('videoUrl', videoUrl)
             formData.append('localAudioFile', audioList[0].raw);
             axios.put("/v1/resource/cloud/localAudioDrive/createTask/lip-sync", formData, {

@@ -83,6 +83,7 @@ import { ElDrawer, ElMessageBox } from 'element-plus'
 import axios from '@/axios'
 import { ElMessage, ElNotification } from 'element-plus'
 import BasicVoice from '@/assets/images/BasicVoice.png'
+import HighFidelitySound from '@/assets/images/HighFidelitySound.png'
 import { ProgressColors, fileNameRegex } from '@/common/ApplicationConstant'
 
 
