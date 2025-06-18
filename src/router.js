@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Homepage from './views/Homepage.vue';
+import HomepageNew from './views/HomepageNew.vue';
 import Login from '@/views/login/Login.vue';
 import Calender from './views/Calender.vue';
-import CreateVideo from './views/resources/CreateVideo.vue';
+import CreateVideoNew from './views/resources/CreateVideoNew.vue';
 import CreateVideoPro from './views/resources/CreateVideoPro.vue';
 import MyResources from './views/resources/MyResources.vue';
 import Register from './views/login/Register.vue';
@@ -14,26 +14,30 @@ import ChangePwd from './views/users/ChangePwd.vue';
 import UserMenuMan from './views/priman/UserMenuMan.vue';
 import BalanceHistory from './views/users/BalanceHistory.vue';
 import CreateDigitalPersonPro from './views/resources/CreateDigitalPersonPro.vue';
+import ImageCloning from './views/resources/ImageCloning.vue';
+import CreateAudio from './views/resources/CreateAudio.vue';
 
 const routes = [
   { path: '/', redirect: '/login' },
   { path: '/login', name: 'login', component: Login },
-  { path: '/register',  component: Register },
+  { path: '/register', component: Register },
   {
-    path: '/homepage', name: 'homepage', component: Homepage,
+    path: '/homepage', name: 'homepage', component: HomepageNew,
     children: [
       { path: '', component: Calender },
-      { path: '/createVideo', component: CreateVideo },
+      { path: '/createVideo', component: CreateVideoNew },
+      { path: '/createAudio', component: CreateAudio },
       { path: '/createVideoPro', component: CreateVideoPro },
       { path: '/myResources', component: MyResources },
       { path: '/voiceClone', component: VoiceClone },
       { path: '/subusers/reg', component: SubUsersReg },
       { path: '/subusers/pointsMan', component: PointsMan },
       { path: '/subusers/lists', component: SubUsersLists },
-      { path: '/changePwd', component:ChangePwd },
-      { path: '/priman/userMenusMan', component:UserMenuMan },
+      { path: '/changePwd', component: ChangePwd },
+      { path: '/priman/userMenusMan', component: UserMenuMan },
       { path: '/balanceHistory', component: BalanceHistory },
-      { path: '/createDigitalPersonPro', component: CreateDigitalPersonPro }
+      { path: '/createDigitalPersonPro', component: CreateDigitalPersonPro },
+      { path: '/imageCloning', component: ImageCloning },
     ]
   }
 

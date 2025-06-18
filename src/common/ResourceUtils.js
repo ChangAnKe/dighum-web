@@ -10,7 +10,7 @@ const downloadResource = (async (resource) => {
     }
     const link = document.createElement('a');
     let preSignedUrl = await fetchPreSignedUrl(resource.comKey.fileType+ '@_@' + resource.comKey.fileName);
-    link.href = isEmpty(resource.resourceUrl) ? preSignedUrl : (dighumUrl + resource.resourceUrl);
+    link.href = isEmpty(resource.resourceUrl) ? preSignedUrl : resource.resourceUrl;
     link.setAttribute('target', '_blank');
     document.body.appendChild(link);
     link.click();

@@ -45,7 +45,7 @@
                 </div>
             </template>
             <VideoPlayer v-if="['3', 'DM_4'].includes(video.status)" width="210px" height="120px"
-                :video-url="isEmpty(video.resourceUrl) ? video.resourceUrl : (dighumUrl + video.resourceUrl)"
+                :video-url="video.resourceUrl"
                 :poster="isCOSUrl(video.coverUrl) ? video.coverUrl : (dighumUrl + video.coverUrl)"
                 :id="video.comKey.fileType + '@_@' + video.comKey.fileName" />
             <el-text type="danger">{{ Status[video.status] }}</el-text>

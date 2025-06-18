@@ -13,8 +13,6 @@ import 'element-plus/dist/index.css'
 import 'animate.css';
 import '@/styles/global.css';
 
-import IconBalanceHistory from './views/images/svg/IconBalanceHistory.vue';
-
 const app = createApp(App)
 const pinia = createPinia()
 
@@ -22,7 +20,6 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   app.component(key, component)
 }
 
-app.component('IconBalanceHistory',IconBalanceHistory);
 
 app.use(ElementPlus, {
   locale: zhCn,
