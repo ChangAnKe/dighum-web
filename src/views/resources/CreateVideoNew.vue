@@ -105,7 +105,7 @@
                                                 :content="moment(video.createDate).format('YYYY-MM-DD HH:mm:ss') + ': ' + video.showFileName"
                                                 placement="top-start">
                                                 <span style="font-size: 15px;">{{ video.showFileName
-                                                }}</span></el-tooltip>
+                                                    }}</span></el-tooltip>
                                             <div :class="{ 'div-checkmark active': index === viIndex }">
                                                 <span :class="{ 'checkmark active': index === viIndex }"
                                                     v-if="index == viIndex">
@@ -131,7 +131,7 @@
                                         :video-url="video.resourceUrl"
                                         :poster="isCOSUrl(video.coverUrl) ? video.coverUrl : (dighumUrl + video.coverUrl)"
                                         :id="video.comKey.fileType + '@_@' + video.comKey.fileName" />
-                                    <el-text type="danger" style="font-size: 20px;">{{ Status[video.status] }}</el-text>
+                                    <el-text v-else type="danger" style="font-size: 20px;">{{ Status[video.status] }}</el-text>
                                 </el-card>
                             </div>
                         </template>
@@ -354,7 +354,7 @@ async function toggleCheckmarkAu(index, audio) {
 async function toggleCheckmarkVi(index, video) {
     viIndex.value = index;
     baseVideoDto.Payload.VirtualmanKey = video.dmVirtualManKey;
-     videoFileName = video.showFileName;
+    videoFileName = video.showFileName;
 }
 
 function validBeforeCreateAIData(reqJson) {
@@ -459,7 +459,7 @@ const aiDoppelganger = async () => {
             notify('Warning', '请选择本地音频！', 'warning', 5000);
             return;
         }
-         //校验必填
+        //校验必填
         if (isEmpty(baseVideoDto.Payload.VirtualmanKey)) {
             notify('Warning', '请选择分身！', 'warning');
             return;
